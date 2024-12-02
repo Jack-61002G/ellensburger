@@ -1,0 +1,32 @@
+-52.426, 36.706, 126.912
+-50.427, 36.672, 126.912
+-48.427, 36.634, 126.911
+-46.427, 36.592, 126.911
+-44.428, 36.544, 126.912
+-42.429, 36.493, 126.915
+-40.429, 36.436, 126.915
+-38.43, 36.374, 126.921
+-36.431, 36.308, 126.931
+-34.433, 36.239, 126.967
+-32.434, 36.167, 126.996
+-30.435, 36.093, 126.965
+-28.437, 36.02, 126.912
+-26.438, 35.952, 126.75
+-24.439, 35.893, 126.632
+-22.439, 35.854, 126.288
+-20.439, 35.851, 125.751
+-18.44, 35.915, 124.47
+-16.449, 36.093, 122.557
+-14.486, 36.471, 119.084
+-12.597, 37.12, 115.509
+-10.818, 38.031, 111.819
+-9.138, 39.115, 108
+-7.793, 40.075, 0
+-7.793, 40.075, 0
+8.485, 51.696, 0
+endData
+209.9
+127
+200
+-52.426, 36.706, -16.214, 36.145, -16.214, 33.899, -7.793, 40.075
+#PATH.JERRYIO-DATA {"appVersion":"0.8.3","format":"LemLib v0.5","gc":{"robotWidth":11.811023622047244,"robotHeight":11.811023622047244,"robotIsHolonomic":false,"showRobot":false,"uol":2.54,"pointDensity":2,"controlMagnetDistance":0.7750015500031,"fieldImage":{"displayName":"V5RC 2025 - High Stakes","signature":"V5RC 2025 - High Stakes","origin":{"__type":"built-in"}},"coordinateSystem":"VEX Gaming Positioning System"},"paths":[{"segments":[{"controls":[{"uid":"YvRxlirKBP","x":-52.42632031870958,"y":36.70628424113549,"lock":false,"visible":true,"heading":0,"__type":"end-point"},{"uid":"hfScvgIaVo","x":-16.214094354297842,"y":36.14485438122213,"lock":false,"visible":true,"__type":"control"},{"uid":"cN87evim1M","x":-16.214094354297842,"y":33.89913494156869,"lock":false,"visible":true,"__type":"control"},{"uid":"nc60yAjqBR","x":-7.7926464555974375,"y":40.074863400615655,"lock":false,"visible":true,"heading":0,"__type":"end-point"}],"speedProfiles":[],"lookaheadKeyframes":[],"uid":"OMgd6R8fjU"}],"pc":{"speedLimit":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":127,"label":"127"},"step":1,"from":108,"to":127},"bentRateApplicableRange":{"minLimit":{"value":0,"label":"0"},"maxLimit":{"value":1,"label":"1"},"step":0.001,"from":0,"to":0.1},"maxDecelerationRate":209.9},"name":"Path","uid":"XPpO96nwPH","lock":false,"visible":true}]}
