@@ -6,12 +6,9 @@
 #include "lib/lift.hpp"
 #include "pros/misc.h"
 #include "robotconfig.h"
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
+
+
+
 void on_center_button() {
   static bool pressed = false;
   pressed = !pressed;
@@ -22,86 +19,79 @@ void on_center_button() {
   }
 }
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+
+
+void auton_check_first() {
+  FILE* file = fopen("auto", "r");
+  if (file != nullptr) {
+    fread(&current_auto, sizeof(int), 1, file);
+    fclose(file);
+  }
+  if (current_auto < 0) {
+    teamColor = team::blue;
+  } else {
+    teamColor = team::red;
+  }
+}
+void auton_check_loop() {
+  pros::Task task = pros::Task{[=] {
+    while (true) {
+      if (current_auto != selector::auton) {
+        current_auto = selector::auton;
+
+        if (current_auto < 0) {
+          teamColor = team::blue;
+        } else {
+          teamColor = team::red;
+        }
+
+        FILE* file = fopen("auto", "w");
+        fwrite(&current_auto, sizeof(int), 1, file);
+        fclose(file);
+      }
+
+      pros::delay(100);
+    }
+  }};
+}
+
+
+
 void initialize() {
-  selector::init();
+  auton_check_first();
+  selector::init(360, current_auto);
+  auton_check_loop();
+
   chassis.calibrate();
   pros::delay(500);
 
   lift.startTask();
   intake.startTask();
-  //lights.startTask();
+  lights.startTask();
 }
 
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
+
+
 void disabled() {}
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
+
+
 void competition_initialize() {}
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
+
+
 void autonomous() {
-
-  if (selector::auton < 0) {
-    teamColor = team::blue;
-  } else {
-    teamColor = team::red;
-  }
-
   if (selector::auton == 1) {
-    skills();
-    return;
-    redRingSide();
+    redMogoRush();
   }
   if (selector::auton == -1) {
-    blueRingSide();
+    blueMogoRush();
   }
 }
 
-/**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
- *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
- */
-void opcontrol() {
 
-  // chassis.team = 1;
-  // lights.team = 1;
+
+void opcontrol() {
 
   lights.startTimer();
   float liftTarget = -1;

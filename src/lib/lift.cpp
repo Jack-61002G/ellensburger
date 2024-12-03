@@ -70,5 +70,8 @@ void Lift::itterateState(bool delta) {
 }
 
 float Lift::getAngle() { return target; }
+void Lift::setAngle(float angle) {
+  motors->set_zero_position_all(-angle);
+}
 void Lift::setTarget(float angle) { target = angle; setState(LiftState::Custom);}
 void Lift::setVoltage(int voltage) { vol = voltage; }

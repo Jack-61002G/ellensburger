@@ -45,6 +45,7 @@ public:
   void loop() override;
 
   float getAngle();
+  void setAngle(float angle);
   void itterateState(bool delta);
   void setTarget(float target);
   void setVoltage(int voltage);

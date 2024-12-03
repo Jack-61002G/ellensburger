@@ -2,6 +2,7 @@
 #include "robotconfig.h"
 #include <cmath>
 #include <string>
+#include <vector>
 
 
 
@@ -138,7 +139,7 @@ std::vector<RGB> interpolateColors(float start, float end, int stripLength) {
     HSV color2 = HSV(end, 1, 1);
     
     std::vector<RGB> result;
-    result.reserve(stripLength);
+    result.reserve(stripLength * 2);
     
     if (stripLength == 1) {
         result.push_back(hsvToRgb(color1));
@@ -154,6 +155,14 @@ std::vector<RGB> interpolateColors(float start, float end, int stripLength) {
         
         result.emplace_back(hsvToRgb(HSV(wrapDegrees(h), s, v)));
     }
+    for (int i = stripLength; i > 0; --i) {
+
+        int h = std::lerp(static_cast<float>(color1.h), static_cast<float>(color2.h), static_cast<float>(i) / stripLength);
+        int s = std::lerp(static_cast<float>(color1.s), static_cast<float>(color2.s), static_cast<float>(i) / stripLength);
+        int v = std::lerp(static_cast<float>(color1.v), static_cast<float>(color2.v), static_cast<float>(i) / stripLength);
+        
+        result.emplace_back(hsvToRgb(HSV(wrapDegrees(h), s, v)));
+    }
     
     return result;
 }
@@ -161,14 +170,14 @@ std::vector<RGB> interpolateColors(float start, float end, int stripLength) {
 
 
 void lib::Lights::loop() {
-    int currentTeam = -1;
+    team currentTeam = teamColor;
     int currentWarning = 0;
     int offset = 0;
     
 
 
-    std::vector<RGB> blue = interpolateColors(120, 300, 40);
-    std::vector<RGB> red = interpolateColors(330, 390, 40);
+    std::vector<RGB> blue = interpolateColors(120, 300, 50);
+    std::vector<RGB> red = interpolateColors(325, 390, 50);
     std::vector<RGB> skills = red; //interpolateColors(260, 338, 40);
 
     std::vector<RGB> warning1 = interpolateColors(100, 180, 40);
@@ -177,9 +186,9 @@ void lib::Lights::loop() {
 
 
     // Calculate colors
-    std::vector<uint32_t> stripColors(40);
-    for (int i = 0; i < 40; i++) {
-        RGB color = team == 1 ? red[i] : team == 2 ? blue[i] : skills[i];
+    std::vector<uint32_t> stripColors(100);
+    for (int i = 0; i < 100; i++) {
+        RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
         stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
                         (static_cast<uint32_t>(color.g) << 8) | 
                         static_cast<uint32_t>(color.b);
@@ -237,10 +246,10 @@ void lib::Lights::loop() {
         }*/
 
         // set to team colors
-        if (team != currentTeam && currentWarning == 0) {
-            currentTeam = team;
-            for (int i = 0; i < 40; i++) {
-                RGB color = team == 1 ? red[i] : team == 2 ? blue[i] : skills[i];
+        if (teamColor != currentTeam && currentWarning == 0) {
+            currentTeam = teamColor;
+            for (int i = 0; i < 100; i++) {
+                RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
                 stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
                                 (static_cast<uint32_t>(color.g) << 8) | 
                                 static_cast<uint32_t>(color.b);
@@ -249,7 +258,7 @@ void lib::Lights::loop() {
 
         // Update left strip
         for (int i = 0; i < 40; i++) {
-            int colorIndex = (i + offset) % 40;
+            int colorIndex = (i + offset) % 100;
             leftDriveLed.set_pixel(stripColors[colorIndex], i);
         }
         pros::delay(10);
@@ -257,7 +266,7 @@ void lib::Lights::loop() {
         
         // Update right strip
         for (int i = 0; i < 40; i++) {
-            int colorIndex = (i + offset) % 40;
+            int colorIndex = (i + offset) % 100;
             rightDriveLed.set_pixel(stripColors[colorIndex], i);
         }
         pros::delay(10);
@@ -266,7 +275,7 @@ void lib::Lights::loop() {
         // update indicator
         if (clamp.is_extended()) {
             for (int i = 0; i < 40; i++) {
-                int colorIndex = (i + offset) % 40;
+                int colorIndex = (i + offset) % 100;
                 indicatorLed1.set_pixel(stripColors[colorIndex], i);
             }
             pros::delay(10);
@@ -277,6 +286,6 @@ void lib::Lights::loop() {
         }
 
 
-        offset = (offset + 1) % 40;
+        offset = (offset + 1) % 100;
     }
 }

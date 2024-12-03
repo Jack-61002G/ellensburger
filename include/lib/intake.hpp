@@ -4,6 +4,7 @@
 #include "main.h"
 #include "pros/adi.hpp"
 #include "pros/optical.hpp"
+#include <cstdint>
 
 namespace lib {
 
@@ -15,7 +16,7 @@ private:
   std::shared_ptr<pros::MotorGroup> motors;
   std::shared_ptr<pros::Optical> color;
   std::shared_ptr<pros::adi::Pneumatics> sort;
-  int sort_time;
+  int sort_time = 0;
 
 
 public:

@@ -10,6 +10,7 @@
 inline bool armLoading = false;
 enum class team {red, blue, none};
 inline team teamColor = team::none;
+inline int current_auto = 0;
 
 // controller
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);

@@ -42,16 +42,15 @@ void Intake::loop() {
 
 
     if (teamColor == team::blue) {
-      if (color->get_hue() < 30 || color->get_hue() > 300) {
+      if ((color->get_hue() < 30 || color->get_hue() > 300) && color->get_proximity() > 200) {
         sort_time = pros::millis();
       }
     } else {
-      if (color->get_hue() > 180 && color->get_hue() < 330) {
+      if ((color->get_hue() > 180 && color->get_hue() < 330) && color->get_proximity() > 200) {
         sort_time = pros::millis();
       }
     }
-
-    if (pros::millis() - sort_time < 175 && !sort_override) {
+    if (pros::millis() - sort_time < 250 && !sort_override) {
       sort->extend();
     } else if (!sort_override) {
       sort->retract();
@@ -89,7 +88,6 @@ void Intake::loop() {
       setState(IntakeState::In);
       break;
     }
-
     pros::delay(10);
   }
 }
