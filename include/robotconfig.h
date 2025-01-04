@@ -6,28 +6,33 @@
 #include "lib/lights.hpp"
 #include "lib/lift.hpp"
 #include "pros/adi.hpp"
+#include "pros/optical.h"
 
 inline bool armLoading = false;
 enum class team {red, blue, none};
 inline team teamColor = team::none;
 inline int current_auto = 0;
+inline bool liftButtonHeld = false;
 
 // controller
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-inline pros::MotorGroup leftMotors({-2, -19, 18},
-                            pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-inline pros::MotorGroup rightMotors({3, -1, 9}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+inline pros::MotorGroup leftMotors({-11, -13, -15}, pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
+inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
-inline pros::Imu imu(4);
+inline pros::Imu imu(17);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-inline pros::Rotation verticalEnc(8);
-inline EmaFilter filter(.875);
+inline pros::Rotation horizontal(7);
+inline EmaFilter filter(1);
+
+inline pros::Rotation vertical(14);
+inline EmaFilter filter2(1);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-inline lemlib::TrackingWheel vertical(&verticalEnc, &filter, lemlib::Omniwheel::NEW_2, 0);
+inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 1.983, 0);
+inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 1.988, 0);
 
 // drivetrain settings
 inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
@@ -35,25 +40,25 @@ inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               12, // 10 inch track width
                               lemlib::Omniwheel::NEW_275, // using new 4" omnis
                               450, // drivetrain rpm is 360
-                              8 // horizontal drift is 2. If we had traction wheels, it would have been 8
+                              2 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
-inline lemlib::ControllerSettings linearController(8, // proportional gain (kP)
+inline lemlib::ControllerSettings linearController(10, // proportional gain (kP)
                                             0, // integral gain (kI)
-                                            7, // derivative gain (kD)
+                                            30, // derivative gain (kD)
                                             3, // anti windup
                                             1, // small error range, in inches
-                                            250, // small error range timeout, in milliseconds
-                                            2, // large error range, in inches
+                                            100, // small error range timeout, in milliseconds
+                                            3, // large error range, in inches
                                             500, // large error range timeout, in milliseconds
-                                            20 // maximum acceleration (slew)
+                                            0 // maximum acceleration (slew)
 );
 
 // angular motion controller
-inline lemlib::ControllerSettings angularController(2, // proportional gain (kP)
+inline lemlib::ControllerSettings angularController(2.5, // proportional gain (kP)
                                              0, // integral gain (kI)
-                                             10, // derivative gain (kD)
+                                             15, // derivative gain (kD)
                                              3, // anti windup
                                              1, // small error range, in degrees
                                              100, // small error range timeout, in milliseconds
@@ -63,9 +68,9 @@ inline lemlib::ControllerSettings angularController(2, // proportional gain (kP)
 );
 
 // sensors for odometry
-inline lemlib::OdomSensors sensors(&vertical, // vertical tracking wheel
+inline lemlib::OdomSensors sensors(&verticalwheel, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
-                            nullptr, // horizontal tracking wheel
+                            &horizontalwheel, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
@@ -86,17 +91,20 @@ inline lemlib::ExpoDriveCurve steerCurve(0, // joystick deadband out of 127
 inline lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 
-inline pros::Optical color(13);
-inline pros::MotorGroup intakeMotor({15});
+inline pros::Optical color(9);
+
+inline pros::MotorGroup intakeMotor({10});
 inline pros::adi::Pneumatics sorter('F', false);
-inline lib::Intake intake(&intakeMotor, &color, &sorter);
+inline pros::adi::Button limit('H');
+inline lib::Intake intake(&intakeMotor, &color, &sorter, &limit);
 
-inline pros::MotorGroup armMotors({11, -17});
-inline lib::Lift lift(&armMotors, 12.0 / 36, {2.5, 0, 1.75});
+inline pros::MotorGroup armMotors({21, -2});
 
-inline pros::adi::Pneumatics doinker('H', false);
-inline pros::adi::Pneumatics clamp('D', false);
-inline pros::adi::Pneumatics rushClamp('C', false);
+inline lib::Lift lift(&armMotors, 12.0 / 36, {1.5, 0, 3.0});
+
+inline pros::adi::Pneumatics doinker('C', false);
+inline pros::adi::Pneumatics clamp('B', false);
+inline pros::adi::Pneumatics rushClamp('A', false);
 
 inline lib::Lights lights = lib::Lights();
 

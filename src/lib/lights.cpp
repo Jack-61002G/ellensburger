@@ -180,18 +180,15 @@ void lib::Lights::loop() {
     std::vector<RGB> red = interpolateColors(325, 390, 50);
     std::vector<RGB> skills = red; //interpolateColors(260, 338, 40);
 
-    std::vector<RGB> warning1 = interpolateColors(100, 180, 40);
-    std::vector<RGB> warning2 = interpolateColors(50, 140, 40);
-
 
 
     // Calculate colors
     std::vector<uint32_t> stripColors(100);
     for (int i = 0; i < 100; i++) {
         RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
-        stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
-                        (static_cast<uint32_t>(color.g) << 8) | 
-                        static_cast<uint32_t>(color.b);
+        stripColors[i] = (static_cast<uint32_t>(color.r * brightness) << 16) | 
+                        (static_cast<uint32_t>(color.g * brightness) << 8) | 
+                        static_cast<uint32_t>(color.b * brightness);
     }
 
 
@@ -210,49 +207,14 @@ void lib::Lights::loop() {
 
     while (true) {
 
-
-        /*if (startTime != -1) {
-            int dT = pros::millis() - startTime;
-
-            // set to time warning 1
-            if (5000 < dT && dT < 6500) {
-                if (currentWarning != 1) {
-                    currentWarning = 1;
-                    for (int i = 0; i < 40; i++) {
-                        RGB color = warning1[i];
-                        stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
-                                        (static_cast<uint32_t>(color.g) << 8) | 
-                                        static_cast<uint32_t>(color.b);
-                    }
-                }
-            }
-
-            // set to time warning 2
-            else if (10000 < dT && dT < 11500) {
-                if (currentWarning != 2) {
-                    currentWarning = 2;
-                    for (int i = 0; i < 40; i++) {
-                        RGB color = warning2[i];
-                        stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
-                                        (static_cast<uint32_t>(color.g) << 8) | 
-                                        static_cast<uint32_t>(color.b);
-                    }
-                }
-            }
-            else if (currentWarning != 0) {
-                currentWarning = 0;
-                currentTeam = -1;
-            }
-        }*/
-
         // set to team colors
         if (teamColor != currentTeam && currentWarning == 0) {
             currentTeam = teamColor;
             for (int i = 0; i < 100; i++) {
                 RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
-                stripColors[i] = (static_cast<uint32_t>(color.r) << 16) | 
-                                (static_cast<uint32_t>(color.g) << 8) | 
-                                static_cast<uint32_t>(color.b);
+                stripColors[i] = (static_cast<uint32_t>(color.r * brightness) << 16) | 
+                                (static_cast<uint32_t>(color.g * brightness) << 8) | 
+                                static_cast<uint32_t>(color.b * brightness);
             }
         }
 

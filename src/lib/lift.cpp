@@ -1,6 +1,7 @@
 #include "lib/lift.hpp"
 #include "pros/abstract_motor.hpp"
 #include "robotconfig.h"
+#include "autoSelect/selection.h"
 #include <cstdint>
 #include <iostream>
 
@@ -46,12 +47,20 @@ void Lift::loop() {
       }
 
       break;
+    
+    case LiftState::Reset:
+
+      if (resetStartTime == 0) { resetStartTime = pros::millis(); motors->move(-127); }
+      else if (pros::millis() - resetStartTime > 600) { motors->tare_position_all(); setState(LiftState::Stored); resetStartTime = 0; }
+
+      break;
 
     case lib::LiftState::Custom:
       break;
     }
 
-    if (getState() != LiftState::Manual) {
+
+    if (getState() != LiftState::Manual && getState() != LiftState::Reset) {
       pid.target_set(target / gearRatio);
       double error = (target / gearRatio) - motors->get_position();
       motors->move(pid.compute_error(error, motors->get_position()));
@@ -69,9 +78,7 @@ void Lift::itterateState(bool delta) {
   }
 }
 
-float Lift::getAngle() { return target; }
-void Lift::setAngle(float angle) {
-  motors->set_zero_position_all(-angle);
-}
+float Lift::getAngle() { return motors->get_position() * gearRatio; }
+void Lift::setStart(float start) { startPos = start; }
 void Lift::setTarget(float angle) { target = angle; setState(LiftState::Custom);}
 void Lift::setVoltage(int voltage) { vol = voltage; }

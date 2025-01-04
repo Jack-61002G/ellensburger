@@ -8,7 +8,7 @@
 
 namespace lib {
 
-enum class LiftState { Stored, Recieve, Score, Manual, Custom};
+enum class LiftState { Stored, Recieve, Score, Manual, Custom, Reset};
 
 // pid constant struct
 struct PIDConstants {
@@ -23,7 +23,7 @@ class Lift : public StateMachine<LiftState, LiftState::Stored>,
 private:
   std::shared_ptr<pros::MotorGroup> motors;
   const float DOWN_ANGLE = 0;
-  const float MID_ANGLE = 19;
+  const float MID_ANGLE = 23;
   const float MIDD_ANGLE = 100;
   const float UP_ANGLE = 225;
 
@@ -32,7 +32,9 @@ private:
   const PIDConstants constants;
 
   double target;
+  float startPos = 0;
   int vol;
+  int resetStartTime = 0;
 
   PID pid = PID(constants.kP, constants.kI, constants.kD);
 
@@ -45,8 +47,8 @@ public:
   void loop() override;
 
   float getAngle();
-  void setAngle(float angle);
   void itterateState(bool delta);
+  void setStart(float start);
   void setTarget(float target);
   void setVoltage(int voltage);
 };
