@@ -5,6 +5,7 @@
 #include "lib/intake.hpp"
 #include "lib/lights.hpp"
 #include "lib/lift.hpp"
+#include "pros/abstract_motor.hpp"
 #include "pros/adi.hpp"
 #include "pros/optical.h"
 
@@ -98,9 +99,9 @@ inline pros::adi::Pneumatics sorter('F', false);
 inline pros::adi::Button limit('H');
 inline lib::Intake intake(&intakeMotor, &color, &sorter, &limit);
 
-inline pros::MotorGroup armMotors({21, -2});
+inline pros::MotorGroup armMotors({-21}, pros::v5::MotorGears::red);
 
-inline lib::Lift lift(&armMotors, 12.0 / 36, {1.5, 0, 3.0});
+inline lib::Lift lift(&armMotors, 1, {1.5, 0, 3.0});
 
 inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);

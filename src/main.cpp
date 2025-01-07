@@ -104,7 +104,7 @@ void auton_check_loop() {
 void initialize() {
   auton_check_first();
   selector::init(360, current_auto);
-  pros::lcd::initialize();
+  //pros::lcd::initialize();
   auton_check_loop();
 
   chassis.calibrate();
@@ -130,8 +130,8 @@ void competition_initialize() {}
 
 
 void autonomous() {
-  redRingSide();
-  return;
+  teamColor = team::blue;
+  blueRingSide();
   if (selector::auton == 1) {
     redRingSide();
   }
