@@ -5,9 +5,12 @@
 #include "lib/intake.hpp"
 #include "lib/lights.hpp"
 #include "lib/lift.hpp"
+#include "lib/newLift.hpp"
 #include "pros/abstract_motor.hpp"
 #include "pros/adi.hpp"
 #include "pros/optical.h"
+#include "pros/rotation.hpp"
+#include "robotconfig.h"
 
 inline bool armLoading = false;
 enum class team {red, blue, none};
@@ -96,17 +99,16 @@ inline pros::Optical color(9);
 
 inline pros::MotorGroup intakeMotor({10});
 inline pros::adi::Pneumatics sorter('F', false);
-inline pros::adi::Button limit('H');
-inline lib::Intake intake(&intakeMotor, &color, &sorter, &limit);
+inline lib::Intake intake(&intakeMotor, &color, &sorter);
 
-inline pros::MotorGroup armMotors({-21}, pros::v5::MotorGears::red);
+inline pros::MotorGroup armMotors({2, 21}, pros::v5::MotorGears::red);
+inline pros::Rotation armrot(6);
 
-inline lib::Lift lift(&armMotors, 1, {1.5, 0, 3.0});
+inline lib::Lift lift(&armMotors, &armrot, {4, 0, 6});
+inline lib::NewLift newLift = lib::NewLift();
 
 inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);
-inline pros::adi::Pneumatics rushClamp('A', false);
+inline pros::adi::Pneumatics wheelsUpPiston('A', false);
 
 inline lib::Lights lights = lib::Lights();
-
-ASSET(example_txt)

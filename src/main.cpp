@@ -6,7 +6,9 @@
 #include "lib/lift.hpp"
 #include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "robotconfig.h"
+#include <cmath>
 #include <string>
 
 void measure_offsets() {
@@ -102,16 +104,14 @@ void auton_check_loop() {
 
 
 void initialize() {
-  auton_check_first();
-  selector::init(360, current_auto);
-  //pros::lcd::initialize();
-  auton_check_loop();
 
   chassis.calibrate();
-  pros::delay(500);
 
-  lift.startTask();
-  intake.startTask();
+  auton_check_first();
+  selector::init(360, current_auto);
+  auton_check_loop();
+  pros::delay(500);
+  
   lights.startTask();
   color.set_integration_time(5);
 
@@ -121,6 +121,8 @@ void initialize() {
 
 void disabled() {
   intake.sort_override = false;
+  lift.stopTask();
+  intake.stopTask();
 }
 
 
@@ -130,6 +132,14 @@ void competition_initialize() {}
 
 
 void autonomous() {
+
+  wheelsUpPiston.retract();
+
+  lift.startTask();
+  intake.startTask();
+
+  if (chassis.getPose().x == NAN || chassis.getPose().y == NAN || chassis.getPose().theta == NAN) {chassis.calibrate();}
+
   teamColor = team::blue;
   blueRingSide();
   if (selector::auton == 1) {
@@ -153,7 +163,10 @@ void autonomous() {
 
 
 void opcontrol() {
-  lift.setStart(20);
+  intake.startTask();
+  newLift.startTask();
+
+  wheelsUpPiston.extend();
 
   lights.startTimer();
   float liftTarget = -1;
@@ -188,20 +201,20 @@ void opcontrol() {
       clamp.toggle();
     }
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      lift.setState(lib::LiftState::Recieve);
+      newLift.setTarget(25);
+      intake.jam_override = true;
     }
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && lift.getState() != lib::LiftState::Reset) {
       liftButtonHeld = true;
-      lift.setState(lib::LiftState::Manual);
-      lift.setVoltage(-127);
+      newLift.setVoltage(-127);
+      intake.jam_override = false;
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && lift.getState() != lib::LiftState::Reset) {
       liftButtonHeld = true;
-      lift.setState(lib::LiftState::Manual);
-      lift.setVoltage(127);
+      newLift.setVoltage(127);
+      intake.jam_override = false;
     } else if (liftButtonHeld) {
       liftButtonHeld = false;
-      //lift.setTarget(lift.getAngle());
-      lift.setVoltage(0);
+      newLift.setTarget();
     }
   
     pros::delay(15);

@@ -19,7 +19,7 @@ void Lift::loop() {
 
       armLoading = false;
       if (target != DOWN_ANGLE) {
-        pid.variables_reset();
+        //pid.variables_reset();
         target = DOWN_ANGLE;
       }
 
@@ -29,7 +29,7 @@ void Lift::loop() {
 
       armLoading = true;
       if (target != MID_ANGLE) {
-        pid.variables_reset();
+        //pid.variables_reset();
         target = MID_ANGLE;
       }
 
@@ -42,16 +42,9 @@ void Lift::loop() {
     case LiftState::Score:
 
       if (target != UP_ANGLE) {
-        pid.variables_reset();
+        //pid.variables_reset();
         target = UP_ANGLE;
       }
-
-      break;
-    
-    case LiftState::Reset:
-
-      if (resetStartTime == 0) { resetStartTime = pros::millis(); motors->move(-127); }
-      else if (pros::millis() - resetStartTime > 600) { motors->tare_position_all(); setState(LiftState::Stored); resetStartTime = 0; }
 
       break;
 
@@ -61,9 +54,10 @@ void Lift::loop() {
 
 
     if (getState() != LiftState::Manual && getState() != LiftState::Reset) {
-      pid.target_set(target / gearRatio);
-      double error = (target / gearRatio) - motors->get_position();
-      motors->move(pid.compute_error(error, motors->get_position()));
+      //pid.target_set(target / gearRatio);
+      double meow = ((rot->get_angle() /100.0) > 300) ? (rot->get_angle() /100.0) - 360 : (rot->get_angle() /100.0); // meow
+      double error = (target / gearRatio) - (meow);
+      //motors->move(pid.compute_error(error, rot->get_angle() /100.0));
       // std::cout<<error<<std::endl;
     }
     pros::Task::delay_until(&now, 15);
@@ -78,7 +72,7 @@ void Lift::itterateState(bool delta) {
   }
 }
 
-float Lift::getAngle() { return motors->get_position() * gearRatio; }
-void Lift::setStart(float start) { startPos = start; }
+float Lift::getAngle() { return rot->get_angle(); }
+void Lift::setStart(float start) { return; }
 void Lift::setTarget(float angle) { target = angle; setState(LiftState::Custom);}
 void Lift::setVoltage(int voltage) { vol = voltage; }

@@ -16,7 +16,7 @@ void Intake::loop() {
 
   while (true) {
     // Intake jam logic
-    if (std::abs(motors->get_actual_velocity_all()[0]) < 5 && getState() != IntakeState::Idle) {
+    if (std::abs(motors->get_actual_velocity_all()[0]) < 5 && getState() != IntakeState::Idle and !jam_override) {
       if (jamStartTime == 0) {
         // First time detecting slow velocity
         jamStartTime = pros::millis();
@@ -79,11 +79,12 @@ void Intake::loop() {
 
     case IntakeState::Jam:
 
-      motors->move(-127);
+      
       if (armLoading || sorter.is_extended()) {
         setState(IntakeState::Idle);
         break;
       } else {
+        motors->move(-127);
         pros::delay(250);
       }
       setState(IntakeState::In);

@@ -1,9 +1,10 @@
 #pragma once
 #include "StateMachine.hpp"
 #include "lib/TaskWrapper.hpp"
-#include "pid.h"
 #include "pros/adi.hpp"
 #include "pros/motor_group.hpp"
+#include "pros/rotation.hpp"
+//#include "robotconfig.h"
 #include <memory>
 
 namespace lib {
@@ -17,17 +18,18 @@ struct PIDConstants {
   double kD;
 };
 
-class Lift : public StateMachine<LiftState, LiftState::Stored>,
+class Lift : public StateMachine<LiftState, LiftState::Custom>,
              public ryan::TaskWrapper {
 
 private:
   std::shared_ptr<pros::MotorGroup> motors;
+  std::shared_ptr<pros::Rotation> rot;
   const float DOWN_ANGLE = 0;
-  const float MID_ANGLE = 28;
+  const float MID_ANGLE = 25;
   const float MIDD_ANGLE = 100;
   const float UP_ANGLE = 225;
 
-  const float gearRatio;
+  const float gearRatio = 1;
 
   const PIDConstants constants;
 
@@ -36,11 +38,10 @@ private:
   int vol;
   int resetStartTime = 0;
 
-  PID pid = PID(constants.kP, constants.kI, constants.kD);
+  //PID pid = PID(constants.kP, constants.kI, constants.kD);
 
 public:
-  Lift(pros::MotorGroup *motors, double gearRatio, PIDConstants constants)
-      : motors(motors), gearRatio(gearRatio), constants(constants){
+  Lift(pros::MotorGroup *motors, pros::Rotation *rot, PIDConstants constants) : motors(motors), rot(rot), constants(constants){
     motors->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
     motors->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   }
