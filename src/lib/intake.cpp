@@ -40,22 +40,19 @@ void Intake::loop() {
       jamTimer = 0;
     }
 
-
-    if (teamColor == team::blue) {
+  if (!sort_override) {
+    if (teamColor == team::blue ) {
       if ((color->get_hue() < 30 || color->get_hue() > 300) && color->get_proximity() > 200) {
-        sort_time = pros::millis();
+        sort_primed = true;
       }
+      else if (sort_primed == true) {setState(IntakeState::Jam); sort_primed = false;}
     } else {
       if ((color->get_hue() > 180 && color->get_hue() < 330) && color->get_proximity() > 200) {
-        sort_time = pros::millis();
+        sort_primed = true;
       }
-    }
-    if (pros::millis() - sort_time < 300 && !sort_override) {
-      sort->extend();
-      if(color->get_proximity() < 250) {setState(IntakeState::Jam);}
-    } else if (!sort_override) {
-      sort->retract();
-    }
+      else if (sort_primed == true) {setState(IntakeState::Jam); sort_primed = false;}
+    }}
+
 
 
     switch (getState()) {
@@ -80,7 +77,7 @@ void Intake::loop() {
     case IntakeState::Jam:
 
       
-      if (armLoading || sorter.is_extended()) {
+      if (armLoading) {
         setState(IntakeState::Idle);
         break;
       } else {

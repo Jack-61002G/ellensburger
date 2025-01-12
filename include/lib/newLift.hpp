@@ -52,5 +52,6 @@ public:
     void setTarget(float newTarget) { target = newTarget; state = NewLiftStates::Position; }
     void setVoltage(float newVoltage) { target = newVoltage; state = NewLiftStates::Voltage; }
     float getAngle() { return rotation.get_angle() / 100.0; };
+    NewLiftStates getState() {return state;}
 };
 }

@@ -4,18 +4,19 @@
 #include "main.h"
 #include "lib/intake.hpp"
 #include "lib/lights.hpp"
-#include "lib/lift.hpp"
 #include "lib/newLift.hpp"
 #include "pros/abstract_motor.hpp"
+#include "robodash/api.h"
 #include "pros/adi.hpp"
 #include "pros/optical.h"
 #include "pros/rotation.hpp"
+#include "robodash/views/selector.hpp"
 #include "robotconfig.h"
 
 inline bool armLoading = false;
 enum class team {red, blue, none};
 inline team teamColor = team::none;
-inline int current_auto = 0;
+inline std::optional<rd::Selector::routine_t> current_auto;
 inline bool liftButtonHeld = false;
 
 // controller
@@ -104,8 +105,8 @@ inline lib::Intake intake(&intakeMotor, &color, &sorter);
 inline pros::MotorGroup armMotors({2, 21}, pros::v5::MotorGears::red);
 inline pros::Rotation armrot(6);
 
-inline lib::Lift lift(&armMotors, &armrot, {4, 0, 6});
-inline lib::NewLift newLift = lib::NewLift();
+//inline lib::Lift lift(&armMotors, &armrot, {4, 0, 6});
+inline lib::NewLift lift = lib::NewLift();
 
 inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);
