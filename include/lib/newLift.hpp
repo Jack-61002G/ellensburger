@@ -1,4 +1,5 @@
 #include "lib/TaskWrapper.hpp"
+#include "lib/pid.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/rotation.hpp"
 
@@ -18,12 +19,9 @@ private:
     pros::Rotation rotation = pros::Rotation(6);
 
     NewLiftStates state;
+    PID pid = PID(2.5, 0, 15);
 
     float target;
-
-    float p = 2.5;
-    float d = 15;
-    float prev_error = 0;
 
 
 
@@ -40,11 +38,11 @@ public:
                 break;
         
             case NewLiftStates::Position:
-                float error = target - rotation.get_angle() / 100.0;
-                motors.move(error * p + (error - prev_error) * d);
-                prev_error = error;
+                motors.move(pid.compute(target - rotation.get_angle() / 100.0));
                 break;
             }
+
+            pros::delay(10);
         }
     };
 
