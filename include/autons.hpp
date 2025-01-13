@@ -43,7 +43,6 @@ inline void redRingSide() {
   chassis.moveToPoint(-24, 0, 1000);
   chassis.waitUntilDone();
   lift.setTarget(150);
-
 }
 
 inline void blueRingSide() {
@@ -79,7 +78,6 @@ inline void blueRingSide() {
   chassis.moveToPoint(25, 0, 1000);
   chassis.waitUntilDone();
   lift.setTarget(25);
-
 }
 
 inline void redMogoRush() {
@@ -92,7 +90,8 @@ inline void redMogoRush() {
   intake.sort_override = true;
 
   pros::Task ring = pros::Task{[=] {
-    while (!((color.get_hue() < 30 || color.get_hue() > 300) && color.get_proximity() > 200)){
+    while (!((color.get_hue() < 30 || color.get_hue() > 300) &&
+             color.get_proximity() > 200)) {
       pros::delay(15);
     }
     intake.setState(lib::IntakeState::Idle);
@@ -104,7 +103,6 @@ inline void redMogoRush() {
   chassis.moveToPose(-28, -46, 180, 1500, {.forwards = false});
   pros::delay(250);
   lift.setTarget(90);
-  
 
   chassis.moveToPoint(-22, -24, 1000, {.forwards = false, .maxSpeed = 60});
   chassis.waitUntilDone();
@@ -114,12 +112,10 @@ inline void redMogoRush() {
   pros::delay(1500);
   chassis.turnToPoint(0, 0, 1000);
 
-  chassis.moveToPose(-16,-12, 45, 2000);
+  chassis.moveToPose(-16, -12, 45, 2000);
   chassis.waitUntilDone();
   lift.setTarget(135);
 }
-
-
 
 inline void blueMogoRush() {
   chassis.setPose(57.25, -48, -90);
@@ -132,7 +128,8 @@ inline void blueMogoRush() {
   intake.sort_override = true;
 
   pros::Task ring = pros::Task{[=] {
-    while (!((color.get_hue() > 180 && color.get_hue() < 330) && color.get_proximity() > 200)){
+    while (!((color.get_hue() > 180 && color.get_hue() < 330) &&
+             color.get_proximity() > 200)) {
       pros::delay(15);
     }
     intake.setState(lib::IntakeState::Idle);
@@ -144,7 +141,6 @@ inline void blueMogoRush() {
   chassis.moveToPose(28, -46, 180, 1500, {.forwards = false});
   pros::delay(250);
   lift.setTarget(90);
-  
 
   chassis.moveToPoint(24, -24, 1000, {.forwards = false, .maxSpeed = 60});
   chassis.waitUntilDone();
@@ -154,7 +150,7 @@ inline void blueMogoRush() {
   pros::delay(1500);
   chassis.turnToPoint(0, 0, 1000);
 
-  chassis.moveToPose(12,-12, -45, 2000);
+  chassis.moveToPose(12, -12, -45, 2000);
   chassis.waitUntilDone();
   lift.setTarget(135);
 }
@@ -281,6 +277,7 @@ inline void oldskills() {
   chassis.moveToPoint(24, 48, 1500);
   chassis.waitUntil(24);
   lift.setTarget(25);
+  intake.jam_override = true;
 
   chassis.turnToPoint(0, 48, 1000);
   chassis.waitUntilDone();
@@ -289,6 +286,7 @@ inline void oldskills() {
   chassis.moveToPoint(4, 48, 1000, {.maxSpeed = 80});
   chassis.waitUntil(6);
   lift.setTarget(75);
+  intake.jam_override = false;
   chassis.waitUntil(12);
   intake.setState(lib::IntakeState::In);
 
@@ -304,17 +302,42 @@ inline void oldskills() {
   chassis.turnToPoint(-24, 40, 1000);
 
   // long intake
-  chassis.moveToPoint(-56, 40, 3000, {.maxSpeed = 70});
+  chassis.moveToPoint(-50, 40, 3000, {.maxSpeed = 65});
 
   // last guy before mogo drop
   chassis.turnToPoint(-48, 50, 1000);
   chassis.moveToPoint(-48, 50, 1000);
 
   // drop the mogo
-  chassis.turnToPoint(-65, -65, 1000, {.forwards = false});
-  chassis.moveToPoint(-65, -65, 1000, {.forwards = false});
+  chassis.turnToPoint(-65, 65, 1000, {.forwards = false});
+  chassis.moveToPoint(-65, 65, 1000, {.forwards = false});
   clamp.set_value(false);
 
   // grab red ring from red/blue corner stack, grab blue goal, sweep corner,
   // place goal
+  chassis.turnToPoint(48, 45, 1000);
+  chassis.moveToPoint(48, 45, 2500, {.maxSpeed = 90});
+
+  pros::Task ring = pros::Task{[=] {
+    while (!((color.get_hue() < 30 || color.get_hue() > 300) &&
+             color.get_proximity() > 200)) {
+      pros::delay(15);
+    }
+    intake.setState(lib::IntakeState::Idle);
+  }};
+
+  chassis.turnToPoint(54, 24, 1000, {.forwards = false});
+  chassis.moveToPoint(54, 24, 1500, {.forwards = false, .maxSpeed = 80});
+  //breaks here
+
+  chassis.turnToPoint(32, 50, 1000);
+  chassis.moveToPoint(32, 50, 1000, {.maxSpeed = 90});
+
+  chassis.turnToPoint(65, 65, 1000);
+  chassis.moveToPoint(65, 65, 1000);
+  doinker.set_value(1);
+  chassis.turnToHeading(180, 1000);
+  chassis.waitUntilDone();
+  clamp.set_value(0);
+  doinker.set_value(0);
 };
