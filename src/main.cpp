@@ -36,13 +36,12 @@ void auton_check_loop() {
 
   void initialize() {
     current_auto = selector.get_auton();
-
     auton_check_loop();
 
-        chassis.calibrate();
+    chassis.calibrate();
     pros::delay(500);
 
-    lights.startTask();
+    //lights.startTask();
     color.set_integration_time(5);
   }
 
@@ -61,10 +60,9 @@ void auton_check_loop() {
     lift.startTask();
     intake.startTask();
 
-    if (chassis.getPose().x == NAN || chassis.getPose().y == NAN ||
-        chassis.getPose().theta == NAN) {
-      chassis.calibrate();
-    }
+    //pisstake.extend();
+    //pros::delay(1000);
+    //pisstake.retract();
 
     selector.run_auton();
   }

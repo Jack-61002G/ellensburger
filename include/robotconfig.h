@@ -4,14 +4,13 @@
 #include "main.h"
 #include "lib/intake.hpp"
 #include "lib/lights.hpp"
-#include "lib/newLift.hpp"
+#include "lib/lift.hpp"
 #include "pros/abstract_motor.hpp"
 #include "robodash/api.h"
 #include "pros/adi.hpp"
 #include "pros/optical.h"
 #include "pros/rotation.hpp"
 #include "robodash/views/selector.hpp"
-#include "robotconfig.h"
 
 inline bool armLoading = false;
 enum class team {red, blue, none};
@@ -99,14 +98,13 @@ inline lemlib::Chassis chassis(drivetrain, linearController, angularController, 
 inline pros::Optical color(9);
 
 inline pros::MotorGroup intakeMotor({10});
-inline pros::adi::Pneumatics sorter('F', false);
-inline lib::Intake intake(&intakeMotor, &color, &sorter);
+inline pros::adi::Pneumatics pisstake('G', false);
+inline lib::Intake intake(&intakeMotor, &color);
 
 inline pros::MotorGroup armMotors({2, 21}, pros::v5::MotorGears::red);
 inline pros::Rotation armrot(6);
 
-//inline lib::Lift lift(&armMotors, &armrot, {4, 0, 6});
-inline lib::NewLift lift = lib::NewLift();
+inline lib::Lift lift = lib::Lift();
 
 inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);

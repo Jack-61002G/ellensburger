@@ -16,7 +16,6 @@ class Intake : public StateMachine<IntakeState, IntakeState::Idle>, public ryan:
 private:
   std::shared_ptr<pros::MotorGroup> motors;
   std::shared_ptr<pros::Optical> color;
-  std::shared_ptr<pros::adi::Pneumatics> sort;
   int sort_time = 0;
 
 
@@ -26,7 +25,7 @@ public:
   bool jam_override = false;
   bool sort_primed = false;
 
-  Intake(pros::MotorGroup *motors, pros::Optical *color, pros::adi::Pneumatics *sort) : motors(motors), color(color), sort(sort) {
+  Intake(pros::MotorGroup *motors, pros::Optical *color) : motors(motors), color(color) {
     color->set_led_pwm(100);
   }
   void loop() override;
