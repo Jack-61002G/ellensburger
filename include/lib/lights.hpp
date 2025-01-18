@@ -13,7 +13,8 @@ private:
 
     pros::adi::Led leftDriveLed = pros::adi::Led('H', 40);
     pros::adi::Led rightDriveLed = pros::adi::Led('E', 40);
-    pros::adi::Led indicatorLed1 = pros::adi::Led('G', 6);
+    pros::adi::Led alignerLed = pros::adi::Led('F', 40);
+    //pros::adi::Led indicatorLed1 = pros::adi::Led('G', 6);
 
 
 public:

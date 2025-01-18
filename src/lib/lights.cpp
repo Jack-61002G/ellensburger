@@ -234,18 +234,26 @@ void lib::Lights::loop() {
         pros::delay(10);
 
 
-        // update indicator
-        if (clamp.is_extended()) {
-            for (int i = 0; i < 40; i++) {
-                int colorIndex = (i + offset) % 100;
-                indicatorLed1.set_pixel(stripColors[colorIndex], i);
-            }
-            pros::delay(10);
-
-        } else {
-            indicatorLed1.clear();
-            pros::delay(10);
+        // update aligner lights
+        for (int i = 0; i < 40; i++) {
+            int colorIndex = (i + offset) % 100;
+            alignerLed.set_pixel(stripColors[colorIndex], i);
         }
+        pros::delay(10);
+
+
+        // update indicator
+        //if (clamp.is_extended()) {
+        //    for (int i = 0; i < 40; i++) {
+        //        int colorIndex = (i + offset) % 100;
+        //        indicatorLed1.set_pixel(stripColors[colorIndex], i);
+        //    }
+        //    pros::delay(10);
+
+        //} else {
+        //    indicatorLed1.clear();
+        //    pros::delay(10);
+        //}
 
 
         offset = (offset + 1) % 100;
