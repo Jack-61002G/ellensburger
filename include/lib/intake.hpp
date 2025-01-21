@@ -24,6 +24,7 @@ public:
   bool sort_override = false;
   bool jam_override = false;
   bool sort_primed = false;
+  bool arm_loading = false;
 
   Intake(pros::MotorGroup *motors, pros::Optical *color) : motors(motors), color(color) {
     color->set_led_pwm(100);

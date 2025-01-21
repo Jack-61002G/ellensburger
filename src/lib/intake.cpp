@@ -25,15 +25,18 @@ void Intake::loop() {
       // Calculate how long we've been in slow velocity state
       uint32_t jamTimer = pros::millis() - jamStartTime;
 
-      if (armLoading) {
-        if (jamTimer > 1000) {
-          setState(IntakeState::Idle);
-        }
-      } else {
-        if (jamTimer > 75) {
-          setState(IntakeState::Jam);
-        }
+      if (arm_loading && jamTimer > 25) {
+        motors->move(0);
+        pros::delay(200);
+        motors->move(127);
+        pros::delay(200);
+        jam_override = true;
+        setState(IntakeState::Idle);
+
+      } else if (!arm_loading && jamTimer > 75) {
+        setState(IntakeState::Jam);
       }
+
     } else {
       // Reset the start time when velocity is normal
       jamStartTime = 0;
@@ -76,14 +79,8 @@ void Intake::loop() {
 
     case IntakeState::Jam:
 
-      
-      if (armLoading) {
-        setState(IntakeState::Idle);
-        break;
-      } else {
-        motors->move(-127);
-        pros::delay(250);
-      }
+      motors->move(-127);
+      pros::delay(250);
       setState(IntakeState::In);
       break;
     }

@@ -41,7 +41,7 @@ void auton_check_loop() {
     chassis.calibrate();
     pros::delay(500);
 
-    lights.startTask();
+    //lights.startTask();
     color.set_integration_time(5);
   }
 
@@ -59,6 +59,7 @@ void auton_check_loop() {
 
     lift.startTask();
     intake.startTask();
+    intake.arm_loading = false;
 
     //pisstake.extend();
     //pros::delay(1000);
@@ -75,6 +76,7 @@ void auton_check_loop() {
 
     lights.startTimer();
     float liftTarget = -1;
+    intake.arm_loading = false;
 
     leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -102,15 +104,18 @@ void auton_check_loop() {
       }
       if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         lift.setTarget(25);
-        intake.jam_override = true;
+        intake.arm_loading = true;
+        intake.jam_override = false;
       }
       if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         liftButtonHeld = true;
         lift.setVoltage(-127);
+        intake.arm_loading = false;
         intake.jam_override = false;
       } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         liftButtonHeld = true;
         lift.setVoltage(127);
+        intake.arm_loading = false;
         intake.jam_override = false;
       } else if (liftButtonHeld) {
         liftButtonHeld = false;

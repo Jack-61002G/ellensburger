@@ -12,7 +12,6 @@
 #include "pros/rotation.hpp"
 #include "robodash/views/selector.hpp"
 
-inline bool armLoading = false;
 enum class team {red, blue, none};
 inline team teamColor = team::none;
 inline std::optional<rd::Selector::routine_t> current_auto;
@@ -65,9 +64,9 @@ inline lemlib::ControllerSettings angularController(2.5, // proportional gain (k
                                              15, // derivative gain (kD)
                                              3, // anti windup
                                              1, // small error range, in degrees
-                                             90, // small error range timeout, in milliseconds
+                                             66, // small error range timeout, in milliseconds
                                              3, // large error range, in degrees
-                                             450, // large error range timeout, in milliseconds
+                                             300, // large error range timeout, in milliseconds
                                              0 // maximum acceleration (slew)
 );
 
