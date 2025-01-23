@@ -192,18 +192,6 @@ void lib::Lights::loop() {
     }
 
 
-    // Fill effect
-    for (int i = 0; i < 40; i++) {
-        int colorIndex = (i + offset) % 40;
-        leftDriveLed.set_pixel(stripColors[colorIndex], i);
-        pros::delay(10);
-
-        rightDriveLed.set_pixel(stripColors[colorIndex], i);
-        pros::delay(10);
-    }
-    offset = (offset + 1) % 40;
-    
-
 
     while (true) {
 

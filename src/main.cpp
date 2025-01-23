@@ -41,7 +41,7 @@ void auton_check_loop() {
     chassis.calibrate();
     pros::delay(500);
 
-    //lights.startTask();
+    lights.startTask();
     color.set_integration_time(5);
   }
 
