@@ -27,15 +27,17 @@ inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // 
 // Inertial Sensor on port 10
 inline pros::Imu imu(17);
 
-// vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-inline pros::Rotation horizontal(7);
-inline EmaFilter filter(1);
+inline pros::Distance dist = pros::Distance(22);
 
-inline pros::Rotation vertical(14);
-inline EmaFilter filter2(1);
+// vertical tracking wheel encoder. Rotation sensor, port 11, reversed
+inline pros::Rotation horizontal(-7);
+inline EmaFilter filter(.9);
+
+inline pros::Rotation vertical(-14);
+inline EmaFilter filter2(.9);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 1.983, 0);
-inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 1.988, 0);
+inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 2.015, 0);
+inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 2.028, 0.138);
 
 // drivetrain settings
 inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
@@ -47,26 +49,26 @@ inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
 );
 
 // lateral motion controller
-inline lemlib::ControllerSettings linearController(10, // proportional gain (kP)
-                                            0, // integral gain (kI)
-                                            30, // derivative gain (kD)
+inline lemlib::ControllerSettings linearController(6.125, // proportional gain (kP)
+                                            0.01, // integral gain (kI)
+                                            1, // derivative gain (kD)
                                             3, // anti windup
-                                            1, // small error range, in inches
-                                            90, // small error range timeout, in milliseconds
-                                            3, // large error range, in inches
-                                            450, // large error range timeout, in milliseconds
-                                            0 // maximum acceleration (slew)
+                                            .5, // small error range, in inches
+                                            35, // small error range timeout, in milliseconds
+                                            1.5, // large error range, in inches
+                                            150, // large error range timeout, in milliseconds
+                                            7 // maximum acceleration (slew)
 );
 
 // angular motion controller
-inline lemlib::ControllerSettings angularController(2.5, // proportional gain (kP)
-                                             0, // integral gain (kI)
-                                             15, // derivative gain (kD)
+inline lemlib::ControllerSettings angularController(4.7, // proportional gain (kP)
+                                             0.01, // integral gain (kI)
+                                             48, // derivative gain (kD)
                                              3, // anti windup
-                                             1, // small error range, in degrees
-                                             66, // small error range timeout, in milliseconds
-                                             3, // large error range, in degrees
-                                             300, // large error range timeout, in milliseconds
+                                             2, // small error range, in degrees
+                                             35, // small error range timeout, in milliseconds
+                                             5, // large error range, in degrees
+                                             100, // large error range timeout, in milliseconds
                                              0 // maximum acceleration (slew)
 );
 

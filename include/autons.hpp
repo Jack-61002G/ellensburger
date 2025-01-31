@@ -1,5 +1,7 @@
 #include "lemlib/chassis/chassis.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "lib/intake.hpp"
+#include "pros/distance.hpp"
 #include "robotconfig.h"
 #include <functional>
 
@@ -11,6 +13,24 @@ ASSET(mogo3rings_txt)
 ASSET(mogo3ring_txt)
 ASSET(mogo4rush_txt)
 ASSET(nyoooom_txt)
+
+
+
+const int distOffset = 2;
+const int wallDist = 65;
+
+inline void resetX(int theta = 90) {
+  chassis.turnToHeading(theta, 1000);
+  chassis.waitUntilDone();
+  EmaFilter filter(.75);
+  float distance;
+  for (int i = 0; i < 5; i++) {
+    distance = filter.Run(dist.get_distance());
+    pros::delay(10);
+  }
+  chassis.setPose(wallDist - distOffset - distance, chassis.getPose().y,
+                  chassis.getPose().theta);
+}
 
 inline void redRingSide() {
   chassis.setPose(-60, 6, -90);
@@ -60,7 +80,7 @@ inline void redRingSide() {
 }
 
 inline void blueRingSide() {
-  chassis.setPose(60, 6, 90);
+  chassis.setPose(60, 6.075, 90);
 
   chassis.swingToPoint(67.5, -0.6, lemlib::DriveSide::RIGHT, 1000);
   pros::delay(150);
@@ -75,11 +95,11 @@ inline void blueRingSide() {
   clamp.extend();
   pros::delay(500);
 
-  chassis.moveToPoint(17.5, 27, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(17, 27, 1000, {.maxSpeed = 80});
 
-  chassis.turnToPoint(17.5, 45, 500, {.maxSpeed = 90});
+  chassis.turnToPoint(17, 45, 500, {.maxSpeed = 90});
   intake.setState(lib::IntakeState::In);
-  chassis.moveToPoint(17.5, 45, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(17, 45, 1000, {.maxSpeed = 90});
 
   pros::delay(300);
 
@@ -99,15 +119,15 @@ inline void blueRingSide() {
 
   chassis.moveToPoint(50, 40, 1000, {.forwards = false, .maxSpeed = 60});
 
-  chassis.turnToPoint(27.5, 7.5, 1000, {.maxSpeed = 100});
-  chassis.moveToPoint(27.5, 7.5, 1000, {.maxSpeed = 100});
+  chassis.turnToPoint(26, 7.5, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(26, 7.5, 1000, {.maxSpeed = 100});
   intake.jam_override = false;
   chassis.waitUntil(12);
   lift.setTarget(150);
 }
 
 inline void redMogoRush() {
-  chassis.setPose(-57.25, -48, 90);
+  chassis.setPose(-57.25, -48, 118);
   chassis.moveToPoint(-57, -48, 100);
 
   chassis.moveToPoint(-15.5, -48, 2000);
@@ -116,7 +136,8 @@ inline void redMogoRush() {
   intake.sort_override = true;
 
   pros::Task ring = pros::Task{[=] {
-    while (!((color.get_hue() < 30 || color.get_hue() > 300) && color.get_proximity() > 200)) {
+    while (!((color.get_hue() < 30 || color.get_hue() > 300) &&
+             color.get_proximity() > 200)) {
       pros::delay(15);
     }
     intake.setState(lib::IntakeState::Idle);
@@ -229,93 +250,196 @@ inline void blueMogoRush() {
 
 inline void skills() {
 
+   // first mogo clamp + alliance stake
+
   chassis.setPose(-54, 0, -90);
   chassis.moveToPoint(-54, 0, 100);
 
-  lift.setTarget(200);
-  pros::delay(500);
-  chassis.moveToPoint(-46, 0, 500, {.forwards = false});
+  lift.setTarget(230);
+  pros::delay(700);
+  chassis.moveToPoint(-47, 0, 500, {.forwards = false});
 
   // Grab first mogo
-  chassis.turnToPoint(-46, 24, 1000, {.forwards = false});
+  chassis.turnToPoint(-47, 24, 1000, {.forwards = false, .minSpeed = 80, .earlyExitRange = 10});
   chassis.waitUntilDone();
   lift.setTarget(0);
-  chassis.moveToPoint(-46, 24, 3000, {.forwards = false, .maxSpeed = 80});
-  chassis.waitUntil(20);
-  clamp.toggle();
-  pros::delay(250);
+  chassis.moveToPoint(-47, 24, 3000, {.forwards = false, .maxSpeed = 80});
+  chassis.waitUntil(18.5);
+  clamp.extend();
+  pros::delay(200);
 
-  chassis.follow(mogo1_txt, 10, 8000);
+   // rings on mogo + 1 wall
+
+  // ring 1
+  chassis.turnToPoint(-24, 24, 1000, {.minSpeed = 80, .earlyExitRange = 10});
   intake.setState(lib::IntakeState::In);
+  chassis.moveToPoint(-24, 24, 1000);
 
-  chassis.waitUntil(105);
-  lift.setTarget(25);
-
-  chassis.turnToPoint(1, 58, 500);
-  chassis.moveToPoint(1, 58, 1500);
-  chassis.waitUntil(36);
-  lift.setTarget(60);
-  while (!(color.get_hue() < 30 || color.get_hue() > 300)) {
-    pros::delay(10);
-  }
-  intake.setState(lib::IntakeState::Idle);
-  return;
-
-  chassis.turnToPoint(0, 72, 500);
-  chassis.turnToPoint(0, 72, 500);
-
-  lift.setTarget(135);
-
-  return;
-  pros::delay(100);
-  chassis.moveToPoint(-48, 0, 2000);
-  chassis.turnToPoint(-44, -24, 1500, {.forwards = false});
-  chassis.moveToPoint(-44, -24, 1500, {.forwards = false, .maxSpeed = 80});
-  chassis.waitUntil(20);
-  clamp.toggle();
-  pros::delay(100);
-  chassis.turnToHeading(90, 1000);
-  chassis.follow(mogo2_txt, 10, 5000);
-
-  chassis.turnToPoint(-70, -70, 1000, {.forwards = false});
-  chassis.moveToPoint(-70, -70, 1000, {.forwards = false});
-  chassis.waitUntilDone();
-  clamp.toggle();
-
-  pros::delay(150);
-
-  chassis.follow(mogo3_txt, 10, 3500);
-  intake.setState(lib::IntakeState::In);
-
-  pros::Task redring = pros::Task{[=] {
-    while (!(color.get_hue() < 30 || color.get_hue() > 300)) {
-      pros::delay(15);
-    }
-    intake.setState(lib::IntakeState::Idle);
-  }};
-
-  chassis.turnToPoint(48, 0, 1000, {.forwards = false});
-  chassis.moveToPoint(55, 5, 1500, {.forwards = false, .maxSpeed = 80});
+  // second ring on the wall
+  chassis.turnToPoint(24, 48, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(24, 48, 1500);
   chassis.waitUntil(24);
-  clamp.toggle();
+  lift.setTarget(25);
+  intake.jam_override = true;
 
-  pros::delay(150);
-  chassis.follow(mogo3rings_txt, 10, 4000);
-  intake.setState(lib::IntakeState::In);
-
-  chassis.turnToHeading(-45, 1000);
-  chassis.follow(mogo3ring_txt, 10, 6000);
+  chassis.turnToPoint(2, 48, 1000, {.minSpeed = 80, .earlyExitRange = 10});
   chassis.waitUntilDone();
   intake.setState(lib::IntakeState::Idle);
-  doinker.toggle();
-  pros::delay(150);
-  chassis.turnToHeading(90, 1000);
-  chassis.turnToPoint(75, 70, 1000, {.forwards = false});
-  chassis.moveToPoint(85, 80, 1000, {.forwards = false});
+
+  lift.setTarget(75);
+  intake.jam_override = false;
+
+  chassis.moveToPoint(2, 49, 1000, {.maxSpeed = 80});
+  chassis.waitUntil(6);
+  intake.setState(lib::IntakeState::In);
+
+  chassis.turnToHeading(0, 1000);
+  chassis.moveToPoint(2, 65, 1000);
+  chassis.waitUntil(0.5);
+  lift.setTarget(175);
+  pros::delay(500);
+
+  // back up and go to fill up mogo in left corner
+  chassis.moveToPoint(0, 40, 1000, {.forwards = false, .maxSpeed = 80});
+  chassis.turnToPoint(-24, 40, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  lift.setTarget(2);
+
+  // long intake
+  chassis.moveToPoint(-51, 40, 3000, {.maxSpeed = 64});
+
+  // last guy before mogo drop
+  chassis.turnToPoint(-48, 50, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-48, 50, 1000, {.maxSpeed = 75});
+
+  // drop the mogo
+  chassis.turnToPoint(-64, 64, 1000, {.forwards = false, .maxSpeed = 75, .earlyExitRange = 10});
+  chassis.moveToPoint(-64, 64, 1000, {.forwards = false});
+  clamp.retract();
+
+  // cross to blue corner
+  chassis.turnToPoint(40, 48, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(40, 48, 5000, {.maxSpeed = 110});
+
+  //get ready to hold ring from blue corner 
+  lift.setTarget(25);
+  intake.jam_override = true;
+
+
+
+  // shove goal into corner
+  chassis.turnToPoint(58, 24, 1000, {.forwards = false, .minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(58, 24, 2000, {.forwards = false, .maxSpeed = 80});
   chassis.waitUntilDone();
   clamp.toggle();
-  chassis.moveToPoint(0, 0, 1000, {.maxSpeed = 45});
-}
+  
+  lift.setTarget(75);
+
+  chassis.turnToPoint(66, 66, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(66, 66, 1000, {.maxSpeed = 80});
+  intake.setState(lib::IntakeState::In);
+
+  chassis.turnToPoint(0, 0, 2000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.waitUntilDone();
+  clamp.toggle();
+
+  //back up and clamp empty goal
+  chassis.turnToPoint(48, 0, 1000 ,{.forwards = false, .minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(48, 0, 1000, {.forwards = false, .maxSpeed = 80});
+  chassis.waitUntilDone();
+  clamp.toggle();
+  pros::delay(200);
+
+  //turn to the alliance stake and score on it
+  chassis.turnToPoint(70, 0, 1000);
+  chassis.waitUntilDone();
+  lift.setTarget(250);
+
+
+  // reset position
+
+  chassis.moveToPoint(36, 0, 1000, {.forwards = false});
+
+  chassis.turnToPoint(26, 31, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  intake.setState(lib::IntakeState::In);
+  chassis.moveToPoint(26, 31, 1100, {.maxSpeed = 100});
+  chassis.waitUntilDone();
+  pros::delay(750);
+  intake.setState(lib::IntakeState::Idle);
+
+  chassis.turnToPoint(-28, -22, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-28, -22, 3000, {.maxSpeed = 90});
+  chassis.waitUntil(45);
+  intake.setState(lib::IntakeState::In);
+  chassis.moveToPoint(-45, -36, 2000, {.maxSpeed = 65});
+
+  // turn to face the driver box and intake the ring
+  chassis.turnToHeading(-90, 1000);
+  chassis.moveToPoint(-58, -36, 1000, {.maxSpeed = 80});
+
+  // grab last of the angle rings
+  chassis.turnToPoint(-52, -48, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-52, -48, 1000, {.maxSpeed = 80});
+
+  // drop off mogo
+  chassis.turnToPoint(-68, -58, 1000, {.forwards = false , .minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-68, -58, 1000, {.forwards = false, .maxSpeed = 80});
+  chassis.waitUntilDone();
+  clamp.retract();
+
+  // intake last ring of the L for da wall stake
+  chassis.turnToPoint(-28, -45, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-28, -45, 1000, {.maxSpeed = 80});
+  lift.setTarget(30);
+
+  // move to new mogo to clamp
+  chassis.turnToPoint(-58.7, -24.7, 1500, {.forwards = false, .minSpeed = 80, .earlyExitRange = 10});
+  intake.jam_override = true;
+  chassis.moveToPoint(-58.7, -24.7, 2000, {.forwards = false, .maxSpeed = 60});
+  pros::delay(300);
+  chassis.waitUntilDone();
+  clamp.extend();
+
+  chassis.turnToPoint(-11, -53, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(-11, -53, 1500, {.maxSpeed = 100});
+  chassis.waitUntil(12);
+  lift.setTarget(75);
+  intake.setState(lib::IntakeState::Idle);
+
+  chassis.waitUntil(25);
+  intake.setState(lib::IntakeState::In);
+
+  // turn to da wall
+  chassis.turnToHeading(180, 1000);
+  chassis.moveToPoint(chassis.getPose().x, -70, 1000, {.maxSpeed = 100});
+  chassis.waitUntil(3);
+  lift.setTarget(175);
+  intake.jam_override = false;
+  pros::delay(500);
+
+  chassis.moveToPoint(chassis.getPose().x, -54, 1000,
+                      {.forwards = false, .maxSpeed = 100});
+  chassis.turnToPoint(44, -53, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  lift.setTarget(75);
+  chassis.moveToPoint(44, -53, 2000, {.maxSpeed = 90, .earlyExitRange = 1});
+  doinker.extend();
+
+  chassis.turnToPoint(60, -70, 1000, {.minSpeed = 80, .earlyExitRange = 10});
+  chassis.moveToPoint(60, -70, 500, {.maxSpeed = 100});
+  chassis.swingToHeading(-150, lemlib::DriveSide::RIGHT, 1000);
+
+  chassis.turnToHeading(-45, 1000, {.earlyExitRange = 2});
+  chassis.moveToPoint(58, -74, 1000, {.forwards = false, .maxSpeed = 100});
+  doinker.retract();
+  pros::delay(200);
+  clamp.retract();
+  pros::delay(300);
+  chassis.moveToPoint(36, -48, 1000, {.maxSpeed = 100});
+  pros::delay(200);
+  intake.setState(lib::IntakeState::Idle);
+  chassis.moveToPoint(-2, -4, 2500, {.forwards = false, .maxSpeed = 75});
+  pros::delay(750);
+  wheelsUpPiston.extend();
+};
 
 inline void oldskills() {
 
@@ -333,7 +457,7 @@ inline void oldskills() {
   chassis.waitUntilDone();
   lift.setTarget(0);
   chassis.moveToPoint(-47, 24, 3000, {.forwards = false, .maxSpeed = 80});
-  chassis.waitUntil(20);
+  chassis.waitUntil(18.5);
   clamp.extend();
   pros::delay(200);
 
@@ -358,7 +482,7 @@ inline void oldskills() {
   lift.setTarget(75);
   intake.jam_override = false;
 
-  chassis.moveToPoint(2, 48, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(2, 49, 1000, {.maxSpeed = 80});
   chassis.waitUntil(6);
   intake.setState(lib::IntakeState::In);
 
@@ -409,16 +533,16 @@ inline void oldskills() {
   pros::delay(100);
 
   chassis.moveToPoint(48, chassis.getPose().y, 1000, {.maxSpeed = 80});
-  chassis.turnToPoint(48,5, 1200, {.forwards = false});
-  chassis.moveToPoint(48, 5, 1200, {.forwards = false, .maxSpeed = 60});
+  chassis.turnToPoint(48, 5, 1200, {.forwards = false});
+  chassis.moveToPoint(48, 5, 1200, {.forwards = false, .maxSpeed = 58});
   chassis.waitUntilDone();
   clamp.extend();
   pros::delay(200);
 
   chassis.moveToPoint(48, 11, 1000, {.maxSpeed = 100});
-  chassis.turnToPoint(24, 33, 1000, {.maxSpeed = 100});
+  chassis.turnToPoint(26, 31, 1000, {.maxSpeed = 100});
   intake.setState(lib::IntakeState::In);
-  chassis.moveToPoint(24, 33, 1100, {.maxSpeed = 100});
+  chassis.moveToPoint(26, 31, 1100, {.maxSpeed = 100});
   chassis.waitUntilDone();
   pros::delay(750);
   intake.setState(lib::IntakeState::Idle);
@@ -431,50 +555,53 @@ inline void oldskills() {
 
   // turn to face the driver box and intake the ring
   chassis.turnToHeading(-90, 1000);
-  chassis.moveToPoint(-59, -36, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(-58, -36, 1000, {.maxSpeed = 80});
 
   // grab last of the angle rings
   chassis.turnToPoint(-52, -48, 1000, {.maxSpeed = 80});
   chassis.moveToPoint(-52, -48, 1000, {.maxSpeed = 80});
 
   // drop off mogo
-  chassis.turnToPoint(-68, -60, 1000, {.forwards = false});
-  chassis.moveToPoint(-68, -60, 1000, {.forwards = false, .maxSpeed = 80});
+  chassis.turnToPoint(-68, -58, 1000, {.forwards = false});
+  chassis.moveToPoint(-68, -58, 1000, {.forwards = false, .maxSpeed = 80});
   chassis.waitUntilDone();
   clamp.retract();
 
   // intake last ring of the L for da wall stake
-  chassis.turnToPoint(-28, -48, 1000);
-  chassis.moveToPoint(-28, -48, 1000, {.maxSpeed = 80});
+  chassis.turnToPoint(-28, -45, 1000);
+  chassis.moveToPoint(-28, -45, 1000, {.maxSpeed = 80});
   lift.setTarget(30);
 
   // move to new mogo to clamp
-  chassis.turnToPoint(-58, -24, 1500, {.forwards = false});
+  chassis.turnToPoint(-58.7, -24.7, 1500, {.forwards = false});
   intake.jam_override = true;
-  chassis.moveToPoint(-58, -24, 2000, {.forwards = false, .maxSpeed = 60});
+  chassis.moveToPoint(-58.7, -24.7, 2000, {.forwards = false, .maxSpeed = 60});
   pros::delay(300);
   chassis.waitUntilDone();
   clamp.extend();
 
-  chassis.turnToPoint(-12, -55, 1000);
-  chassis.moveToPoint(-12, -55, 1500, {.maxSpeed = 100});
-  chassis.waitUntil(24);
+  chassis.turnToPoint(-11, -53, 1000);
+  chassis.moveToPoint(-11, -53, 1500, {.maxSpeed = 100});
+  chassis.waitUntil(12);
   lift.setTarget(75);
   intake.setState(lib::IntakeState::Idle);
 
+  chassis.waitUntil(25);
+  intake.setState(lib::IntakeState::In);
+
   // turn to da wall
   chassis.turnToHeading(180, 1000);
-  intake.setState(lib::IntakeState::In);
   chassis.moveToPoint(chassis.getPose().x, -70, 1000, {.maxSpeed = 100});
   chassis.waitUntil(3);
   lift.setTarget(175);
   intake.jam_override = false;
   pros::delay(500);
 
-  chassis.moveToPoint(chassis.getPose().x, -50, 1000, {.forwards = false, .maxSpeed = 100});
-  chassis.turnToPoint(44, -55, 1000);
-  lift.setTarget(2);
-  chassis.moveToPoint(44, -55, 2000, {.maxSpeed = 90, .earlyExitRange = 1});
+  chassis.moveToPoint(chassis.getPose().x, -54, 1000,
+                      {.forwards = false, .maxSpeed = 100});
+  chassis.turnToPoint(44, -53, 1000);
+  lift.setTarget(75);
+  chassis.moveToPoint(44, -53, 2000, {.maxSpeed = 90, .earlyExitRange = 1});
   doinker.extend();
 
   chassis.turnToPoint(60, -70, 1000);
@@ -482,10 +609,15 @@ inline void oldskills() {
   chassis.swingToHeading(-150, lemlib::DriveSide::RIGHT, 1000);
 
   chassis.turnToHeading(-45, 1000, {.earlyExitRange = 2});
+  chassis.moveToPoint(58, -74, 1000, {.forwards = false, .maxSpeed = 100});
   doinker.retract();
-  chassis.moveToPoint(56, -74, 1000, {.forwards = false, .maxSpeed = 100});
   pros::delay(200);
   clamp.retract();
   pros::delay(300);
-  chassis.moveToPoint(34, -46, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(36, -48, 1000, {.maxSpeed = 100});
+  pros::delay(200);
+  intake.setState(lib::IntakeState::Idle);
+  chassis.moveToPoint(-2, -4, 2500, {.forwards = false, .maxSpeed = 75});
+  pros::delay(750);
+  wheelsUpPiston.extend();
 };
