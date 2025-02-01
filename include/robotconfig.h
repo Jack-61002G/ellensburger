@@ -27,7 +27,7 @@ inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // 
 // Inertial Sensor on port 10
 inline pros::Imu imu(17);
 
-inline pros::Distance dist = pros::Distance(22);
+inline pros::Distance dist = pros::Distance(5);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
 inline pros::Rotation horizontal(-7);
@@ -56,7 +56,7 @@ inline lemlib::ControllerSettings linearController(6.125, // proportional gain (
                                             .5, // small error range, in inches
                                             35, // small error range timeout, in milliseconds
                                             1.5, // large error range, in inches
-                                            150, // large error range timeout, in milliseconds
+                                            160, // large error range timeout, in milliseconds
                                             7 // maximum acceleration (slew)
 );
 
@@ -98,7 +98,7 @@ inline lemlib::Chassis chassis(drivetrain, linearController, angularController, 
 
 inline pros::Optical color(9);
 
-inline pros::MotorGroup intakeMotor({10});
+inline pros::MotorGroup intakeMotor({-8});
 inline pros::adi::Pneumatics pisstake('G', false);
 inline lib::Intake intake(&intakeMotor, &color);
 

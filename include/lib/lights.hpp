@@ -21,8 +21,6 @@ public:
     int startTime = -1;
     float brightness = 0.7;
 
-    void startTimer() { startTime = pros::millis(); }
-    void stopTimer() { startTime = -1; }
     void loop() override;
 
 };

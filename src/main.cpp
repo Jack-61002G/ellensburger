@@ -8,6 +8,7 @@
 #include "robodash/api.h"
 #include "robodash/views/console.hpp"
 #include "robotconfig.h"
+#include "lib/reset.hpp"
 #include <cctype>
 #include <cmath>
 #include <string>
@@ -21,6 +22,8 @@ rd::Selector selector({{"red ring", redRingSide},
                        {"skills", oldskills}});
 
 rd::Console console;
+
+
 
 void measure_offsets() {
     // Number of times to test
@@ -105,6 +108,8 @@ void auton_check_loop() {
   }};
 }
 
+
+
 void initialize() {
   current_auto = selector.get_auton();
   auton_check_loop();
@@ -116,13 +121,15 @@ void initialize() {
   color.set_integration_time(5);
 }
 
+
+
 void disabled() {
   intake.sort_override = false;
   lift.stopTask();
   intake.stopTask();
 }
 
-void competition_initialize() {}
+
 
 void autonomous() {
 
@@ -132,75 +139,84 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
-  // pisstake.extend();
-  // pros::delay(1000);
-  // pisstake.retract();
   skills();
   return;
   selector.run_auton();
 }
 
+
+
 void opcontrol() {
+
   console.focus();
   intake.startTask();
   lift.startTask();
 
   wheelsUpPiston.extend();
 
-  lights.startTimer();
-  float liftTarget = -1;
-  intake.arm_loading = false;
-
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
+  chassis.setPose(0, 0, 90);
+  lib::wallReset(lib::dir::X_PLUS);
+
   while (true) {
+
     console.clear();
     std::string str = "pos:" + std::to_string(chassis.getPose().x) + "," +
-                      std::to_string(chassis.getPose().y) + "," +
-                      std::to_string(chassis.getPose().theta);
+                               std::to_string(chassis.getPose().y) + "," +
+                               std::to_string(chassis.getPose().theta);
     console.print(str);
 
-    chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),
-                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-    lib::IntakeState newState =
-        (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+
+    // Drive control
+    chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
+                  controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+    
+    
+    // Intake control
+    lib::IntakeState newState = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
             ? lib::IntakeState::In
-        : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+            : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
             ? lib::IntakeState::Out
             : lib::IntakeState::Idle;
-
-    if (intake.getState() != newState &&
-        intake.getState() != lib::IntakeState::Jam) {
+    if (intake.getState() != newState && intake.getState() != lib::IntakeState::Jam) {
       intake.setState(newState);
     }
+
+
+    // Doinker and clamp
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       doinker.toggle();
     }
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       clamp.toggle();
     }
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+
+
+    // Lift control
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
       lift.setTarget(25);
       intake.arm_loading = true;
       intake.jam_override = false;
     }
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // manually drive down
       liftButtonHeld = true;
       lift.setVoltage(-127);
       intake.arm_loading = false;
       intake.jam_override = false;
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+    }
+    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // manually drive up
       liftButtonHeld = true;
       lift.setVoltage(127);
       intake.arm_loading = false;
       intake.jam_override = false;
-    } else if (liftButtonHeld) {
+    }
+    else if (liftButtonHeld) { // set hold target when button is released
       liftButtonHeld = false;
       lift.setTarget();
     }
-    //int liftvoltage = std::abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) > 20 ? controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-    //lift.setVoltage(liftvoltage);
+
 
     pros::delay(15);
   }
