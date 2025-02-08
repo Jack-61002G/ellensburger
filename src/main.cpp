@@ -139,8 +139,6 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
-  skills();
-  return;
   selector.run_auton();
 }
 
@@ -196,7 +194,7 @@ void opcontrol() {
 
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
-      lift.setTarget(25);
+      lift.setTarget(26);
       intake.arm_loading = true;
       intake.jam_override = false;
     }
