@@ -27,7 +27,7 @@ inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // 
 // Inertial Sensor on port 10
 inline pros::Imu imu(17);
 
-inline pros::Distance dist = pros::Distance(5);
+inline pros::Distance dist = pros::Distance(22);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
 inline pros::Rotation horizontal(-7);
@@ -96,7 +96,7 @@ inline lemlib::ExpoDriveCurve steerCurve(0, // joystick deadband out of 127
 inline lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 
-inline pros::Optical color(9);
+inline pros::Optical color(5);
 
 inline pros::MotorGroup intakeMotor({-8});
 inline pros::adi::Pneumatics pisstake('G', false);

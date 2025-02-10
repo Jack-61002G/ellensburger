@@ -19,7 +19,7 @@ rd::Selector selector({{"red ring", redRingSide},
                        {"blue ring", blueRingSide},
                        {"red mogo", redMogoRush},
                        {"blue mogo", blueMogoRush},
-                       {"skills", oldskills}});
+                       {"skills", skills}}); 
 
 rd::Console console;
 
@@ -94,6 +94,10 @@ inline void tune(){
 void auton_check_loop() {
   pros::Task task = pros::Task{[=] {
     while (true) {
+
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        return;
+      }
 
       auto lower_name = selector.get_auton()->name;
 
@@ -191,6 +195,13 @@ void opcontrol() {
       clamp.toggle();
     }
 
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      if (teamColor == team::blue) {
+        teamColor = team::red;
+      } else {
+        teamColor = team::blue;
+      }
+    }
 
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position

@@ -7,7 +7,11 @@
 
 namespace lib {
 
+
+
 enum class LiftStates { Position, Voltage };
+
+
 
 class Lift : public ryan::TaskWrapper {
 
@@ -16,7 +20,7 @@ private:
   pros::Rotation rotation = pros::Rotation(6);
 
   LiftStates state;
-  PID pid = PID(2.5, 0.001, 15);
+  PID pid = PID(2.5, 0, 15);
 
   float target;
 
@@ -42,10 +46,6 @@ public:
   };
 
   void setTarget() {
-    if (state == LiftStates::Voltage) {
-      setVoltage(0);
-      motors.brake();
-    }
     target = rotation.get_angle() / 100.0;
     state = LiftStates::Position;
   }
