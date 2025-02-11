@@ -223,7 +223,7 @@ void opcontrol() {
     }
     else if (liftButtonHeld) { // set hold target when button is released
       liftButtonHeld = false;
-      lift.setTarget();
+      lift.hold();
     }
 
 

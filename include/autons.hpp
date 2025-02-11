@@ -279,24 +279,25 @@ inline void skills() {
   intake.setState(lib::IntakeState::In);
   chassis.moveToPoint(-25, 24, 1000);
 
-  // second ring
-  chassis.turnToPoint(23.5, 48.5, 1000, {.minSpeed = 80});
-  chassis.moveToPoint(23.5, 48.5, 1500);
-  chassis.waitUntil(24);
+  // wall stake ring
+  chassis.turnToPoint(0, 60, 1000);
+  chassis.moveToPoint(0, 60, 1500, {.maxSpeed = 100});
+  chassis.waitUntil(12);
   lift.setTarget(25);
   intake.jam_override = true;
+
+  // third ring
+  chassis.turnToPoint(24, 48, 1000);
+  chassis.moveToPoint(24, 48, 1500, {.maxSpeed = 100});
   
   // move to wall stake
-  chassis.turnToPoint(-1, 42, 1000, {.maxSpeed = 100});
-  chassis.waitUntilDone();
+  chassis.turnToPoint(0, 42, 1000, {.forwards = false, .maxSpeed = 100});
+  chassis.moveToPoint(0, 42, 1000, {.maxSpeed = 100});
 
+  chassis.waitUntil(20);
   intake.setState(lib::IntakeState::Idle);
   lift.setTarget(75);
   intake.jam_override = false;
-
-  chassis.moveToPoint(-1, 42, 1000, {.maxSpeed = 100});
-  pros::delay(500);
-  intake.setState(lib::IntakeState::In);
 
   // score on wall
   chassis.turnToPoint(-1, 65, 1000);
@@ -312,6 +313,7 @@ inline void skills() {
 
   // long intake
   chassis.moveToPoint(-60, 48, 3000, {.maxSpeed = 64});
+  intake.setState(lib::IntakeState::In);
 
   // last guy before mogo drop
   chassis.turnToPoint(-48, 60, 1000, {.minSpeed = 80});
