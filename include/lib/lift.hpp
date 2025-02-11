@@ -28,6 +28,7 @@ public:
 
   void loop() override {
     motors.set_brake_mode_all(pros::MotorBrake::hold);
+    hold();
 
     while (true) {
       switch (state) {

@@ -27,7 +27,7 @@ inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // 
 // Inertial Sensor on port 10
 inline pros::Imu imu(17);
 
-inline pros::Distance dist = pros::Distance(22);
+inline pros::Distance dist = pros::Distance(3);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
 inline pros::Rotation horizontal(-7);
