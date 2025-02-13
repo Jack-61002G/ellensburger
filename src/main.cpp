@@ -4,6 +4,7 @@
 #include "lib/intake.hpp"
 #include "pros/abstract_motor.hpp"
 #include "pros/misc.h"
+#include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 #include "robodash/api.h"
 #include "robodash/views/console.hpp"
@@ -95,10 +96,6 @@ void auton_check_loop() {
   pros::Task task = pros::Task{[=] {
     while (true) {
 
-      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-        return;
-      }
-
       auto lower_name = selector.get_auton()->name;
 
       if (lower_name.find("blue") != std::string::npos) {
@@ -107,7 +104,17 @@ void auton_check_loop() {
         teamColor = team::red;
       }
 
+      if (lower_name.find("mogo") != std::string::npos) {
+        pisstake.extend();
+      } else {
+        pisstake.retract();
+      }
+
       pros::delay(100);
+
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || !pros::competition::is_disabled()) {
+        return;
+      }
     }
   }};
 }
