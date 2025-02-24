@@ -16,11 +16,7 @@
 
 
 
-rd::Selector selector({{"red ring", redRingSide},
-                       {"blue ring", blueRingSide},
-                       {"red mogo", redMogoRush},
-                       {"blue mogo", blueMogoRush},
-                       {"skills", skills}}); 
+rd::Selector selector({{"red ring", redRingSide}}); 
 
 rd::Console console;
 
@@ -112,7 +108,7 @@ void auton_check_loop() {
 
       pros::delay(100);
 
-      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || !pros::competition::is_disabled()) {
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
         return;
       }
     }
@@ -208,6 +204,10 @@ void opcontrol() {
       } else {
         teamColor = team::blue;
       }
+    }
+
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+      pisstake.toggle();
     }
 
     // Lift control
