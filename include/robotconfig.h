@@ -2,6 +2,7 @@
 #include "lemlib/api.hpp"
 #include "lemlib/asset.hpp"
 #include "main.h"
+#include "lib/color.hpp"
 #include "lib/intake.hpp"
 #include "lib/lights.hpp"
 #include "lib/lift.hpp"
@@ -96,7 +97,7 @@ inline lemlib::ExpoDriveCurve steerCurve(0, // joystick deadband out of 127
 inline lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors, &throttleCurve, &steerCurve);
 
 
-inline pros::Optical color(5);
+inline lib::Color color = lib::Color();
 
 inline pros::MotorGroup intakeMotor({-8});
 inline pros::adi::Pneumatics pisstake('G', false);

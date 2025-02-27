@@ -45,12 +45,12 @@ void Intake::loop() {
 
   if (!sort_override) {
     if (teamColor == team::blue ) {
-      if ((color->get_hue() < 30 || color->get_hue() > 300) && color->get_proximity() > 200) {
+      if (color->seesRed()) {
         sort_primed = true;
       }
       else if (sort_primed == true) {setState(IntakeState::Jam); sort_primed = false;}
     } else {
-      if ((color->get_hue() > 180 && color->get_hue() < 330) && color->get_proximity() > 200) {
+      if (color->seesBlue()) {
         sort_primed = true;
       }
       else if (sort_primed == true) {setState(IntakeState::Jam); sort_primed = false;}

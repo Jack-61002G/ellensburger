@@ -16,7 +16,14 @@
 
 
 
-rd::Selector selector({{"red ring", redRingSide}}); 
+rd::Selector selector({
+  {"skills", skills},
+  {"red ring", redRingSide},
+  {"blue ring", blueRingSide},
+  {"red AWP", redSoloAWP},
+  {"blue AWP", blueSoloAWP},
+  {"red rush", redMogoRush},
+  {"blue rush", blueMogoRush}}); 
 
 rd::Console console;
 
@@ -125,7 +132,6 @@ void initialize() {
   pros::delay(500);
 
   lights.startTask();
-  color.set_integration_time(5);
 }
 
 
@@ -146,6 +152,8 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
+  skills();
+  return;
   selector.run_auton();
 }
 
