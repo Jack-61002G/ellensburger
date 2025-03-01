@@ -169,42 +169,34 @@ inline void redRingSide() {
   
   // clamp goal
   pros::delay(500);
-  chassis.moveToPoint(-48, 24, 1000, {.forwards = false, .minSpeed = 60, .earlyExitRange = 11});
-  chassis.moveToPoint(-23, 24, 1000, {.forwards = false, .maxSpeed = 70, .minSpeed = 20, .earlyExitRange = 4});
+  chassis.moveToPoint(-48, 24, 1000, {.forwards = false, .minSpeed = 90, .earlyExitRange = 6});
+  chassis.moveToPoint(-23, 24, 1000, {.forwards = false, .minSpeed = 60, .earlyExitRange = 6});
   lift.setTarget(75);
 
   chassis.waitUntilDone();
   clamp.extend();
 
-  pros::delay(250);
-  chassis.moveToPoint(-6.2, 32.5, 1200, {.maxSpeed = 80});
-
   // intake quad stack
-  chassis.turnToPoint(-6, 60, 1000, {.maxSpeed = 90});
+  pros::delay(250);
+  chassis.moveToPoint(-7, 42, 1200, {.maxSpeed = 80});
   intake.setState(lib::IntakeState::In);
-  chassis.moveToPoint(-6, 60, 1500, {.maxSpeed = 90});
+
+  chassis.turnToPoint(-6.5, 55, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(-6.5, 55, 1500, {.maxSpeed = 90});
 
   chassis.waitUntilDone();
   pros::delay(200);
 
+  // back out
   chassis.swingToHeading(18, lemlib::DriveSide::LEFT, 1000, {.maxSpeed = 90});
-  chassis.moveToPoint(-15.5, 26, 500, {.forwards = false, .maxSpeed = 90});
+  chassis.moveToPoint(-13, 40, 500, {.forwards = false, .maxSpeed = 90});
   
-  chassis.turnToPoint(-28, 50, 1000);
-  chassis.moveToPoint(-28, 50, 1000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 2});
-
-  // intake corner stack
-  chassis.waitUntilDone();
-  pros::delay(200);
-  chassis.moveToPoint(-70, 70, 1500, {.maxSpeed = 100});
-
-  pros::delay(950);
-  intake.setState(lib::IntakeState::Out);
-  chassis.waitUntilDone();
-  pros::delay(100);
-  intake.setState(lib::IntakeState::In);
+  chassis.turnToPoint(-70, 70, 1000);
+  chassis.moveToPoint(-70, 70, 1500, {.maxSpeed = 90});
   intake.jam_override = true;
-  pros::delay(50);
+
+  chassis.waitUntilDone();
+  pros::delay(250);
 
   chassis.moveToPoint(-48, 48, 2000, {.forwards = false, .maxSpeed = 60});
 
@@ -226,62 +218,53 @@ inline void blueRingSide() {
   chassis.setPose(56, 12.5, 135);
 
   // score on alliance stake
-  chassis.moveToPoint(59, 9.5, 480);
+  chassis.moveToPoint(59, 9.5, 470);
   lift.setTarget(220);
   chassis.waitUntilDone();
   
   // clamp goal
   pros::delay(500);
-  chassis.moveToPoint(48, 24, 1000, {.forwards = false, .minSpeed = 60, .earlyExitRange = 11});
-  chassis.moveToPoint(23, 24, 1000, {.forwards = false, .maxSpeed = 70, .minSpeed = 20, .earlyExitRange = 4});
+  chassis.moveToPoint(48, 24, 1000, {.forwards = false, .minSpeed = 90, .earlyExitRange = 6});
+  chassis.moveToPoint(23, 24, 1000, {.forwards = false, .minSpeed = 60, .earlyExitRange = 6});
   lift.setTarget(75);
 
   chassis.waitUntilDone();
   clamp.extend();
 
-  pros::delay(250);
-  chassis.moveToPoint(7.2, 35, 1200, {.maxSpeed = 80});
-
   // intake quad stack
-  chassis.turnToPoint(7, 60, 1000, {.maxSpeed = 90});
+  pros::delay(250);
+  chassis.moveToPoint(7, 42, 1200, {.maxSpeed = 80});
   intake.setState(lib::IntakeState::In);
-  chassis.moveToPoint(7, 60, 1600, {.maxSpeed = 90});
+
+  chassis.turnToPoint(6.5, 55, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(6.5, 55, 1500, {.maxSpeed = 90});
 
   chassis.waitUntilDone();
   pros::delay(200);
 
+  // back out
   chassis.swingToHeading(-18, lemlib::DriveSide::RIGHT, 1000, {.maxSpeed = 90});
-  chassis.moveToPoint(15.5, 26, 500, {.forwards = false, .maxSpeed = 90});
+  chassis.moveToPoint(13, 40, 500, {.forwards = false, .maxSpeed = 90});
   
-  chassis.turnToPoint(28.2, 52, 1000);
-  chassis.moveToPoint(28.2, 52, 1000, {.maxSpeed = 90, .minSpeed = 20, .earlyExitRange = 6});
-
-  // intake corner stack
-  chassis.waitUntilDone();
-  pros::delay(200);
-  chassis.moveToPoint(70, 68, 1500, {.maxSpeed = 100});
-
-  pros::delay(950);
-  intake.setState(lib::IntakeState::Out);
-  chassis.waitUntilDone();
-  pros::delay(100);
-  intake.setState(lib::IntakeState::In);
+  chassis.turnToPoint(70, 70, 1000);
+  chassis.moveToPoint(70, 70, 1500, {.maxSpeed = 90});
   intake.jam_override = true;
-  pros::delay(50);
+
+  chassis.waitUntilDone();
+  pros::delay(250);
 
   chassis.moveToPoint(48, 48, 2000, {.forwards = false, .maxSpeed = 60});
 
-  chassis.turnToPoint(45, 6.5, 500, {.maxSpeed = 70});
-  chassis.moveToPoint(45, 6.5, 3000, {.maxSpeed = 70});
+  chassis.turnToPoint(46.5, 7.1, 500, {.maxSpeed = 70});
+  chassis.moveToPoint(46.5, 7.1, 3000, {.maxSpeed = 70});
 
   pisstake.extend();
   chassis.waitUntilDone();
   pisstake.retract();
   pros::delay(500);
 
-  lift.setTarget(205);
-  chassis.turnToPoint(27, 2, 500);
-  chassis.moveToPoint(27, 2, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(46, 10, 400, {.forwards = false});
+  chassis.moveToPoint(67, -75, 1500);
 }
 
 

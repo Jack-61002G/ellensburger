@@ -115,7 +115,7 @@ void auton_check_loop() {
 
       pros::delay(100);
 
-      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
         return;
       }
     }
@@ -152,7 +152,7 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
-  skills();
+  redRingSide();
   return;
   selector.run_auton();
 }
@@ -206,7 +206,7 @@ void opcontrol() {
       clamp.toggle();
     }
 
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
       if (teamColor == team::blue) {
         teamColor = team::red;
       } else {
