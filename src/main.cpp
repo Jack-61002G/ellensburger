@@ -21,9 +21,8 @@ rd::Selector selector({
   {"red ring", redRingSide},
   {"blue ring", blueRingSide},
   {"red AWP", redSoloAWP},
-  {"blue AWP", blueSoloAWP},
-  {"red rush", redMogoRush},
-  {"blue rush", blueMogoRush}}); 
+  {"blue AWP", blueSoloAWP}
+}); 
 
 rd::Console console;
 
@@ -152,7 +151,7 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
-  redRingSide();
+  skills();
   return;
   selector.run_auton();
 }

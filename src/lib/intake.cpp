@@ -28,8 +28,10 @@ void Intake::loop() {
       if (arm_loading && jamTimer > 25) {
         motors->move(0);
         pros::delay(200);
+
         motors->move(127);
         pros::delay(200);
+        
         jam_override = true;
         setState(IntakeState::Idle);
 
