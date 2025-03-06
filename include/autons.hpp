@@ -303,6 +303,51 @@ inline void blueRingSide() {
 
 
 
+inline void redGoalSide() {
+  chassis.setPose(-54, -24, -90);
+
+  chassis.moveToPoint(-26, -24, 1000, {.forwards = false, .maxSpeed = 70});
+  chassis.waitUntilDone();
+  clamp.extend();
+
+  chassis.turnToPoint(-10, -10, 750);
+  chassis.moveToPoint(-10, -10, 1000, {.maxSpeed = 100});
+  chassis.waitUntilDone();
+  doinker.extend();
+
+  pros::delay(1000);
+  chassis.moveToPoint(-24, -24, 1000, {.forwards = false});
+  doinker.retract();
+
+  pros::delay(250);
+  intake.setState(lib::IntakeState::In);
+  chassis.moveToPoint(-16, -16, 1000);
+
+  chassis.moveToPoint(-24, -24, 1000, {.forwards = false});
+
+  chassis.turnToPoint(-24, -48, 1000);
+  chassis.moveToPoint(-24, -48, 1000);
+
+  chassis.turnToPoint(-70, -70, 1000);
+  chassis.moveToPoint(-70, -70, 2000, {.maxSpeed = 68});
+
+  pros::delay(800);
+  intake.setState(lib::IntakeState::Out);
+  intake.jam_override = true;
+
+  chassis.waitUntilDone();
+  pros::delay(200);
+  intake.setState(lib::IntakeState::In);
+  pros::delay(200);
+
+  chassis.moveToPoint(-50, -50, 1000, {.forwards = false});
+  chassis.moveToPoint(-68, -67, 1000);
+  chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = 90});
+  intake.jam_override = false;
+}
+
+
+
 inline void redMogoRush() {
   chassis.setPose(-55.5, -48, 90);
 
@@ -461,7 +506,7 @@ inline void skills() {
   chassis.turnToPoint(24.5, 50, 1000, {.minSpeed = 80});
   chassis.moveToPoint(24.5, 50, 1500);
   chassis.waitUntil(24);
-  lift.setTarget(26);
+  lift.setTarget(20);
   intake.arm_loading = true;
 
   // move to wall stake
@@ -510,7 +555,7 @@ inline void skills() {
   chassis.moveToPoint(41, 46, 5000, {.maxSpeed = 110});
 
   // get ready to hold ring from blue corner 
-  lift.setTarget(26);
+  lift.setTarget(20);
   intake.arm_loading = true;
   pros::delay(1000);
   doinker.extend();
@@ -528,7 +573,7 @@ inline void skills() {
 
   intake.setState(lib::IntakeState::Idle);
   lift.setTarget(75);
-  pros::delay(200);
+  pros::delay(350);
   intake.setState(lib::IntakeState::Out);
 
   chassis.moveToPoint(56, 24, 2000, {.forwards = false, .maxSpeed = 85});
@@ -543,6 +588,8 @@ inline void skills() {
   chassis.moveToPoint(66, 66, 1500, {.maxSpeed = 90});
 
   chassis.turnToPoint(0, 0, 2000, {.minSpeed = 90});
+  pros::delay(300);
+  doinker.retract();
   chassis.moveToPoint(80, 80, 550, {.forwards = false});
   clamp.retract();
   doinker.retract();
@@ -619,8 +666,13 @@ inline void skills() {
   // intake last ring of the L for da wall stake
   chassis.turnToPoint(-23, -47, 1000, {.minSpeed = 80, .earlyExitRange = 10});
   chassis.moveToPoint(-23, -47, 1000, {.maxSpeed = 80});
-  lift.setTarget(26);
-  intake.arm_loading = true;
+  lift.setTarget(20);
+
+  pros::Task task = pros::Task{[=] {
+    int start = pros::millis();
+    while (!color.seesRed() && pros::millis() - start < 1500) { pros::delay(10); }
+    intake.arm_loading = true;
+  }};
 
   // move to new mogo to clamp
   chassis.turnToPoint(-47, -22.5, 1500, {.forwards = false, .minSpeed = 80, .earlyExitRange = 10});

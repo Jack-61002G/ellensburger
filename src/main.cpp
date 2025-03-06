@@ -151,7 +151,7 @@ void autonomous() {
   intake.startTask();
   intake.arm_loading = false;
 
-  skills();
+  redGoalSide();
   return;
   selector.run_auton();
 }
@@ -179,6 +179,17 @@ void opcontrol() {
                                std::to_string(chassis.getPose().y) + "," +
                                std::to_string(chassis.getPose().theta);
     console.print(str);
+
+
+    // Alliance Stake Macro
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      chassis.tank(-65, -65);
+      lift.setTarget(220);
+      pros::delay(180);
+      chassis.tank(0, 0);
+      pros::delay(255);
+      liftButtonHeld = false;
+    }
 
 
     // Drive control
@@ -219,7 +230,7 @@ void opcontrol() {
 
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
-      lift.setTarget(26);
+      lift.setTarget(20);
       intake.arm_loading = true;
       intake.jam_override = false;
     }

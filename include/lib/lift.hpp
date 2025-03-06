@@ -4,6 +4,7 @@
 #include "pros/motor_group.hpp"
 #include "pros/rotation.hpp"
 #include "pros/rtos.hpp"
+#include <cmath>
 
 namespace lib {
 
@@ -18,8 +19,8 @@ private:
   pros::MotorGroup motors = pros::MotorGroup({-2, 21});
   pros::Rotation rotation = pros::Rotation(6);
 
-  LiftStates state;
-  PID pid = PID(2.5, 0, 15);
+  LiftStates state = LiftStates::Hold;
+  PID pid = PID(3, 0, 15);
 
   float target;
 
@@ -28,7 +29,6 @@ public:
 
   void loop() override {
     motors.set_brake_mode_all(pros::MotorBrake::hold);
-    hold();
 
     while (true) {
       switch (state) {
