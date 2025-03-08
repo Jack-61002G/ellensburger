@@ -4,7 +4,7 @@
 #include "pros/motor_group.hpp"
 #include "pros/rotation.hpp"
 #include "pros/rtos.hpp"
-#include <cmath>
+
 
 namespace lib {
 
