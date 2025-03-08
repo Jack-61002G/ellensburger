@@ -31,14 +31,16 @@ public:
     motors.set_brake_mode_all(pros::MotorBrake::hold);
 
     while (true) {
-      switch (state) {
+      float position = rotation.get_angle() / 100.0;
+      if (position > 330) { position -= 360; }
 
+      switch (state) {
       case LiftStates::Voltage:
         motors.move(target);
         break;
 
       case LiftStates::Position:
-        motors.move(pid.compute(target - rotation.get_angle() / 100.0));
+        motors.move(pid.compute(target - position));
         break;
 
       case LiftStates::Hold:

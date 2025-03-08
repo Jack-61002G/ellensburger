@@ -114,7 +114,7 @@ void auton_check_loop() {
 
       pros::delay(100);
 
-      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
         return;
       }
     }
@@ -185,9 +185,9 @@ void opcontrol() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       chassis.tank(-65, -65);
       lift.setTarget(220);
-      pros::delay(180);
+      pros::delay(165);
       chassis.tank(0, 0);
-      pros::delay(255);
+      pros::delay(270);
       liftButtonHeld = false;
     }
 
@@ -216,12 +216,17 @@ void opcontrol() {
       clamp.toggle();
     }
 
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       if (teamColor == team::blue) {
         teamColor = team::red;
       } else {
         teamColor = team::blue;
       }
+    }
+
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      intake.sort_override = !intake.sort_override;
+      lights.lightsOn = !intake.sort_override;
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {

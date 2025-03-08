@@ -194,6 +194,7 @@ void lib::Lights::loop() {
 
 
     while (true) {
+        if (lightsOn) {
 
         // set to team colors
         if (teamColor != currentTeam && currentWarning == 0) {
@@ -245,5 +246,15 @@ void lib::Lights::loop() {
 
 
         offset = (offset + 1) % 100;
+
+        }
+        else {
+            leftDriveLed.clear();
+            pros::delay(10);
+            rightDriveLed.clear();
+            pros::delay(10);
+            alignerLed.clear();
+            pros::delay(10);
+        }
     }
 }
