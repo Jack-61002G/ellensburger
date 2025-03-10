@@ -11,7 +11,7 @@ using namespace lib;
 void Intake::loop() { while (true) {
         
   // Color Sort Handling
-  if (sortEnabled && ((teamColor == team::blue && color->seesRed()) || (teamColor != team::blue && color->seesBlue()))) {
+  if (sortEnabled && direction > 0 && ((teamColor == team::blue && color->seesRed()) || (teamColor != team::blue && color->seesBlue()))) {
     sortPrimed = true;
   } else if (sortPrimed) {
     sortPrimed = false;
@@ -33,7 +33,7 @@ void Intake::loop() { while (true) {
       break;
     
     case Jam::Tap:
-      if (jamStartTime == 0 && !ringSeated) { jamStartTime = pros::millis(); }
+      if (jamStartTime == 0 && direction > 0 && !ringSeated) { jamStartTime = pros::millis(); }
       else if (pros::millis() - jamStartTime > 25) {
         ringSeated = true;
         motors->move(0);

@@ -35,21 +35,29 @@ public:
 
   void loop() override;
         
-  void setDirection(int8_t direction) {
-    jamStartTime = 0; ringSeated = false; sortPrimed = false;
-    this->direction = direction;
+  void setDirection(int8_t dir) {
+    if (direction != dir) {
+      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      direction = dir;
+    }
   }
-  void setJamMode(Jam jamMode) {
-    jamStartTime = 0; ringSeated = false;
-    this->jamMode = jamMode;
+  void setJamMode(Jam jam) {
+    if (jamMode != jam) {
+      jamStartTime = 0; ringSeated = false;
+      jamMode = jam;
+    }
   }
-  void setSortEnabled(bool sortEnabled) {
-    jamStartTime = 0; ringSeated = false; sortPrimed = false;
-    this->sortEnabled = sortEnabled;
+  void setSortEnabled(bool sort) {
+    if (sortEnabled != sort) {
+      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      sortEnabled = sort;
+    }
   }
-  void setState(int8_t direction, bool sortEnabled, Jam jamMode) {
-    jamStartTime = 0; ringSeated = false; sortPrimed = false;
-    this->direction = direction; this->sortEnabled = sortEnabled; this->jamMode = jamMode;;
+  void setState(int8_t dir, bool sort, Jam jam) {
+    if (direction != dir || sortEnabled != sort || jamMode != jam) {
+      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      direction = dir; sortEnabled = sort; jamMode = jam;;
+    }
   }
 };
 }
