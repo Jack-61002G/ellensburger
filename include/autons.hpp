@@ -1,3 +1,4 @@
+#include "intake.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lib/intake.hpp"
 #include "pros/rtos.hpp"
@@ -38,7 +39,7 @@ inline void redSoloAWP() {
   pros::delay(250);
   chassis.turnToPoint(-24, 48, 750, {.minSpeed = 50, .earlyExitRange = 3.5});
   chassis.moveToPoint(-24, 48, 1000, {.maxSpeed = 100});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   // quad stack
   chassis.waitUntilDone();
@@ -64,7 +65,7 @@ inline void redSoloAWP() {
   int start = pros::millis();
   while (!color.seesRed() && pros::millis() - start < 1300) { pros::delay(50); }
 
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
   chassis.turnToPoint(-24, -24, 1000, {.forwards = false});
   chassis.moveToPoint(-24, -24, 1000, {.forwards = false, .maxSpeed = 90});
   chassis.waitUntil(24);
@@ -74,7 +75,7 @@ inline void redSoloAWP() {
   pros::delay(250);
   chassis.turnToPoint(-24, -51, 1000, {.minSpeed = 40, .earlyExitRange = 4});
   chassis.moveToPoint(-24, -51, 1000, {.maxSpeed = 75});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   chassis.waitUntilDone();
   pros::delay(250);
@@ -83,7 +84,7 @@ inline void redSoloAWP() {
   pros::delay(250);
   lift.setTarget(45);
   chassis.moveToPoint(-6, -6, 500);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 }
 
 
@@ -109,7 +110,7 @@ inline void blueSoloAWP() {
   pros::delay(250);
   chassis.turnToPoint(24, 48, 750, {.minSpeed = 50, .earlyExitRange = 3.5});
   chassis.moveToPoint(24, 48, 1000, {.maxSpeed = 100});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   // quad stack
   chassis.waitUntilDone();
@@ -135,7 +136,7 @@ inline void blueSoloAWP() {
   int start = pros::millis();
   while (!color.seesBlue() && pros::millis() - start < 1300) { pros::delay(50); }
 
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
   chassis.turnToPoint(24, -24, 1000, {.forwards = false});
   chassis.moveToPoint(24, -24, 1000, {.forwards = false, .maxSpeed = 90});
   chassis.waitUntil(24);
@@ -145,7 +146,7 @@ inline void blueSoloAWP() {
   pros::delay(250);
   chassis.turnToPoint(24, -51, 1000, {.minSpeed = 40, .earlyExitRange = 4});
   chassis.moveToPoint(24, -51, 1000, {.maxSpeed = 75});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   chassis.waitUntilDone();
   pros::delay(250);
@@ -154,7 +155,7 @@ inline void blueSoloAWP() {
   pros::delay(250);
   lift.setTarget(45);
   chassis.moveToPoint(6, -6, 500);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 }
 
 
@@ -179,7 +180,7 @@ inline void redRingSide() {
   // intake quad stack
   pros::delay(250);
   chassis.moveToPoint(-8, 42, 1200, {.maxSpeed = 80});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   chassis.turnToPoint(-8.5, 55, 1000, {.maxSpeed = 100});
   chassis.moveToPoint(-8.5, 55, 1500, {.maxSpeed = 100});
@@ -196,12 +197,11 @@ inline void redRingSide() {
   while (!color.seesBlue() && pros::millis() - start < 1750) {pros::delay(50);}
 
   pros::delay(150);
-  intake.setState(lib::IntakeState::Out);
-  intake.jam_override = true;
+  intake.setState(-127, true, lib::Jam::None);
 
   chassis.waitUntilDone();
   pros::delay(200);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(200);
 
   chassis.moveToPoint(-50, 50, 1000, {.forwards = false});
@@ -212,7 +212,7 @@ inline void redRingSide() {
   chassis.turnToPoint(-46.5, 6, 500);
   chassis.moveToPoint(-46.5, 6, 3000, {.maxSpeed = 90, .minSpeed = 30, .earlyExitRange = 2});
 
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
 
   pisstake.extend();
   chassis.waitUntilDone();
@@ -251,7 +251,7 @@ inline void blueRingSide() {
   // intake quad stack
   pros::delay(250);
   chassis.moveToPoint(8.5, 42, 1200, {.maxSpeed = 80});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   chassis.turnToPoint(9.25, 55, 1000, {.maxSpeed = 100});
   chassis.moveToPoint(9.25, 55, 1500, {.maxSpeed = 100});
@@ -268,12 +268,11 @@ inline void blueRingSide() {
   while (!color.seesRed() && pros::millis() - start < 1750) {pros::delay(50);}
 
   pros::delay(150);
-  intake.setState(lib::IntakeState::Out);
-  intake.jam_override = true;
+  intake.setState(-127, true, lib::Jam::None);
 
   chassis.waitUntilDone();
   pros::delay(200);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(200);
 
   chassis.moveToPoint(50, 50, 1000, {.forwards = false});
@@ -284,7 +283,7 @@ inline void blueRingSide() {
   chassis.turnToPoint(46.5, 5.5, 500);
   chassis.moveToPoint(46.5, 5.5, 3000, {.maxSpeed = 90, .minSpeed = 30, .earlyExitRange = 2});
 
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
 
   pisstake.extend();
   chassis.waitUntilDone();
@@ -320,7 +319,7 @@ inline void redGoalSide() {
   doinker.retract();
 
   pros::delay(250);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   chassis.moveToPoint(-16, -16, 1000);
 
   chassis.moveToPoint(-24, -24, 1000, {.forwards = false});
@@ -332,18 +331,18 @@ inline void redGoalSide() {
   chassis.moveToPoint(-70, -70, 2000, {.maxSpeed = 68});
 
   pros::delay(800);
-  intake.setState(lib::IntakeState::Out);
-  intake.jam_override = true;
+  intake.setState(-127, true, lib::Jam::None);
+
 
   chassis.waitUntilDone();
   pros::delay(200);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(200);
 
   chassis.moveToPoint(-50, -50, 1000, {.forwards = false});
   chassis.moveToPoint(-68, -67, 1000);
   chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = 90});
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
 }
 
 
@@ -353,20 +352,20 @@ inline void redMogoRush() {
 
   chassis.moveToPoint(-15.5, -48, 2000);
   lift.setTarget(150);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pisstake.retract();
-  intake.sort_override = true;
+  intake.setSortEnabled(false);
 
   pros::Task ring = pros::Task{[=] {
     while (!color.seesRed()) {
       pros::delay(15);
     }
-    intake.setState(lib::IntakeState::Idle);
+    intake.setDirection(0);
   }};
 
   chassis.waitUntil(38);
   lift.setTarget(230);
-  intake.sort_override = false;
+  intake.setSortEnabled(true);
 
   chassis.waitUntilDone();
   pros::delay(200);
@@ -382,7 +381,7 @@ inline void redMogoRush() {
 
   chassis.moveToPoint(-22, -30, 1000);
   chassis.waitUntilDone();
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(1300);
 
   chassis.turnToPoint(-57, -57, 1000, {.maxSpeed = 90});
@@ -390,25 +389,25 @@ inline void redMogoRush() {
 
   chassis.waitUntilDone();
   pros::delay(250);
-  intake.setState(lib::IntakeState::Out);
+  intake.setDirection(0);
 
   chassis.moveToPoint(-72, -70, 1000, {.maxSpeed = 90});
 
   chassis.waitUntilDone();
   pros::delay(200);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(400);
-  intake.jam_override = true;
+  intake.setJamMode(lib::Jam::None);
   pros::delay(400);
 
   chassis.moveToPoint(-45, -45, 2000, {.forwards = false, .maxSpeed = 40});
 
   chassis.turnToPoint(-14, -14, 1000, {.maxSpeed = 60});
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
   chassis.moveToPoint(-14, -14, 2500, {.maxSpeed = 60});
   lift.setTarget(135);
   chassis.waitUntilDone();
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 }
 
 
@@ -418,20 +417,20 @@ inline void blueMogoRush() {
 
   chassis.moveToPoint(15.5, -48, 2000);
   lift.setTarget(150);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pisstake.retract();
-  intake.sort_override = true;
+  intake.setSortEnabled(false);
 
   pros::Task ring = pros::Task{[=] {
     while (!color.seesBlue()) {
       pros::delay(15);
     }
-    intake.setState(lib::IntakeState::Idle);
+    intake.setDirection(0);
   }};
 
   chassis.waitUntil(38);
   lift.setTarget(230);
-  intake.sort_override = false;
+  intake.setSortEnabled(true);
 
   chassis.waitUntilDone();
   pros::delay(200);
@@ -447,7 +446,7 @@ inline void blueMogoRush() {
 
   chassis.moveToPoint(22, -30, 1000);
   chassis.waitUntilDone();
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(1300);
 
   chassis.turnToPoint(57, -57, 1000, {.maxSpeed = 90});
@@ -455,25 +454,25 @@ inline void blueMogoRush() {
 
   chassis.waitUntilDone();
   pros::delay(250);
-  intake.setState(lib::IntakeState::Out);
+  intake.setDirection(0);
 
   chassis.moveToPoint(72, -70, 1000, {.maxSpeed = 90});
 
   chassis.waitUntilDone();
   pros::delay(200);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   pros::delay(400);
-  intake.jam_override = true;
+  intake.setJamMode(lib::Jam::None);
   pros::delay(400);
 
   chassis.moveToPoint(45, -45, 2000, {.forwards = false, .maxSpeed = 40});
 
   chassis.turnToPoint(14, -14, 1000, {.maxSpeed = 60});
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
   chassis.moveToPoint(14, -14, 2500, {.maxSpeed = 60});
   lift.setTarget(135);
   chassis.waitUntilDone();
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 }
 
 
@@ -499,7 +498,7 @@ inline void skills() {
 
   // ring 1
   chassis.turnToPoint(-25, 24, 1000, {.minSpeed = 80});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   chassis.moveToPoint(-25, 24, 1000);
 
   // second ring
@@ -507,26 +506,25 @@ inline void skills() {
   chassis.moveToPoint(24.5, 50, 1500);
   chassis.waitUntil(24);
   lift.setTarget(20);
-  intake.arm_loading = true;
+  intake.setJamMode(lib::Jam::Tap);
 
   // move to wall stake
   pros::delay(600);
   chassis.moveToPoint(-1, 41, 1000, {.forwards = false, .maxSpeed = 100});
 
   pros::delay(800);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
   lift.setTarget(75);
 
   pros::delay(300);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   // score on wall
   chassis.turnToPoint(-1, 63.5, 1000);
   chassis.moveToPoint(-1, 63.5, 1000);
   chassis.waitUntil(12.25);
   lift.setTarget(175);
-  intake.arm_loading = false;
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
   pros::delay(500);
 
   // back up and go to fill up mogo in left corner
@@ -536,7 +534,7 @@ inline void skills() {
 
   // long intake
   chassis.moveToPoint(-60, 48, 3000, {.maxSpeed = 70});
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   // last guy before mogo drop
   chassis.waitUntilDone();
@@ -556,7 +554,7 @@ inline void skills() {
 
   // get ready to hold ring from blue corner 
   lift.setTarget(20);
-  intake.arm_loading = true;
+  intake.setJamMode(lib::Jam::Tap);
   pros::delay(1000);
   doinker.extend();
 
@@ -571,10 +569,10 @@ inline void skills() {
   // grab blue goal
   chassis.turnToPoint(56, 24, 1000, {.forwards = false, .minSpeed = 80});
 
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
   lift.setTarget(75);
   pros::delay(350);
-  intake.setState(lib::IntakeState::Out);
+  intake.setDirection(-127);
 
   chassis.moveToPoint(56, 24, 2000, {.forwards = false, .maxSpeed = 85});
   doinker.retract();
@@ -609,31 +607,30 @@ inline void skills() {
   pros::delay(250);
   lib::wallReset(lib::dir::X_PLUS);
   pros::delay(50);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 
   // turn to the alliance stake and score on it
   chassis.moveToPoint(55, -1.5, 750, {.maxSpeed = 100});
   chassis.waitUntilDone();
   lift.setTarget(250);
-  intake.arm_loading = false;
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
   pros::delay(500);
 
   chassis.moveToPoint(48, 0, 750, {.forwards = false, .minSpeed = 80});
 
   chassis.turnToPoint(26, 24, 1000, {.minSpeed = 50, .earlyExitRange = 5});
   lift.setTarget(2);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   chassis.moveToPoint(26, 24, 1100, {.maxSpeed = 100});
   chassis.waitUntilDone();
   pros::delay(750);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 
   // cross under ladder
   chassis.turnToPoint(-23, -24, 1000, {.minSpeed = 50, .earlyExitRange = 5});
   chassis.moveToPoint(-23, -24, 3000, {.minSpeed = 40, .earlyExitRange = 6});
   chassis.waitUntil(45.5);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
   chassis.moveToPoint(-42, -46, 2000, {.maxSpeed = 80});
 
   chassis.turnToHeading(-90, 1500);
@@ -671,7 +668,7 @@ inline void skills() {
   pros::Task task = pros::Task{[=] {
     int start = pros::millis();
     while (!color.seesRed() && pros::millis() - start < 1500) { pros::delay(10); }
-    intake.arm_loading = true;
+    intake.setJamMode(lib::Jam::Tap);
   }};
 
   // move to new mogo to clamp
@@ -686,10 +683,10 @@ inline void skills() {
   chassis.moveToPoint(-1, -44, 1500, {.maxSpeed = 100});
   chassis.waitUntil(12);
   lift.setTarget(75);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
 
   chassis.waitUntil(25);
-  intake.setState(lib::IntakeState::In);
+  intake.setDirection(127);
 
   // turn to da wall
   chassis.turnToHeading(180, 1000);
@@ -701,8 +698,7 @@ inline void skills() {
   chassis.moveToPoint(-1, -63.5, 1000, {.maxSpeed = 100});
   chassis.waitUntil(10.5);
   lift.setTarget(175);
-  intake.arm_loading = false;
-  intake.jam_override = false;
+  intake.setJamMode(lib::Jam::Reverse);
   pros::delay(500);
 
   // back out
@@ -739,7 +735,7 @@ inline void skills() {
 
   // hang
   chassis.moveToPoint(30, -30, 1000);
-  intake.setState(lib::IntakeState::Idle);
+  intake.setDirection(0);
   chassis.moveToPoint(2, -2, 2400, {.forwards = false, .maxSpeed = 75});
   pros::delay(750);
   wheelsUpPiston.extend();

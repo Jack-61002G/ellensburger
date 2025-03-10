@@ -136,7 +136,6 @@ void initialize() {
 
 
 void disabled() {
-  intake.sort_override = false;
   lift.stopTask();
   intake.stopTask();
 }
@@ -149,7 +148,8 @@ void autonomous() {
 
   lift.startTask();
   intake.startTask();
-  intake.arm_loading = false;
+
+  intake.setState(0, true, lib::Jam::Reverse);
 
   redGoalSide();
   return;
@@ -165,6 +165,8 @@ void opcontrol() {
   lift.startTask();
 
   wheelsUpPiston.extend();
+
+  intake.setState(0, true, lib::Jam::Reverse);
 
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -198,14 +200,11 @@ void opcontrol() {
     
     
     // Intake control
-    lib::IntakeState newState = (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-            ? lib::IntakeState::In
-            : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-            ? lib::IntakeState::Out
-            : lib::IntakeState::Idle;
-    if (intake.getState() != newState && intake.getState() != lib::IntakeState::Jam) {
-      intake.setState(newState);
-    }
+    intake.setDirection(
+      controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127
+      : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? -127
+      : 0
+    );
 
 
     // Doinker and clamp
@@ -225,8 +224,8 @@ void opcontrol() {
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      intake.sort_override = !intake.sort_override;
-      lights.lightsOn = !intake.sort_override;
+      intake.sortEnabled = !intake.sortEnabled;
+      lights.lightsOn = intake.sortEnabled;
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
@@ -236,20 +235,17 @@ void opcontrol() {
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
       lift.setTarget(20);
-      intake.arm_loading = true;
-      intake.jam_override = false;
+      intake.setJamMode(lib::Jam::Tap);
     }
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // manually drive down
       liftButtonHeld = true;
       lift.setVoltage(-127);
-      intake.arm_loading = false;
-      intake.jam_override = false;
+      intake.setJamMode(lib::Jam::Reverse);
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // manually drive up
       liftButtonHeld = true;
       lift.setVoltage(127);
-      intake.arm_loading = false;
-      intake.jam_override = false;
+      intake.setJamMode(lib::Jam::Reverse);
     }
     else if (liftButtonHeld) { // set hold target when button is released
       liftButtonHeld = false;

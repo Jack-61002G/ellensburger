@@ -4,27 +4,52 @@
 #include "color.hpp"
 #include "pros/motor_group.hpp"
 
+
+
 namespace lib {
 
-enum class IntakeState {In, Out, Jam, Idle};
 
-class Intake : public StateMachine<IntakeState, IntakeState::Idle>, public ryan::TaskWrapper {
+
+enum class Jam { Reverse, Tap, None };
+
+
+
+class Intake : public ryan::TaskWrapper {
 
 private:
   std::shared_ptr<pros::MotorGroup> motors;
   std::shared_ptr<lib::Color> color;
-  int sort_time = 0;
-
-
+  
+  
 public:
+  int8_t direction = 0;
+  bool sortEnabled = true;
+  Jam jamMode = Jam::Reverse;
 
-  bool sort_override = false;
-  bool jam_override = false;
-  bool sort_primed = false;
-  bool arm_loading = false;
+  uint jamStartTime = 0;
+  bool ringSeated = false;
+  bool sortPrimed = false;
+
 
   Intake(pros::MotorGroup *motors, lib::Color *color) : motors(motors), color(color) {}
-  void loop() override;
 
-  };
+  void loop() override;
+        
+  void setDirection(int8_t direction) {
+    jamStartTime = 0; ringSeated = false; sortPrimed = false;
+    this->direction = direction;
+  }
+  void setJamMode(Jam jamMode) {
+    jamStartTime = 0; ringSeated = false;
+    this->jamMode = jamMode;
+  }
+  void setSortEnabled(bool sortEnabled) {
+    jamStartTime = 0; ringSeated = false; sortPrimed = false;
+    this->sortEnabled = sortEnabled;
+  }
+  void setState(int8_t direction, bool sortEnabled, Jam jamMode) {
+    jamStartTime = 0; ringSeated = false; sortPrimed = false;
+    this->direction = direction; this->sortEnabled = sortEnabled; this->jamMode = jamMode;;
+  }
+};
 }
