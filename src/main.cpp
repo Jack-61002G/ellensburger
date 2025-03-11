@@ -149,7 +149,8 @@ void autonomous() {
   lift.startTask();
   intake.startTask();
 
-  intake.setState(0, true, lib::Jam::Reverse);
+  intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
+  lights.lightsOn = true;
 
   redGoalSide();
   return;
@@ -166,7 +167,8 @@ void opcontrol() {
 
   wheelsUpPiston.extend();
 
-  intake.setState(0, true, lib::Jam::Reverse);
+  intake.setDirection(lib::Dir::Idle);
+  intake.setJamMode(lib::Jam::Reverse);
 
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -182,6 +184,7 @@ void opcontrol() {
                                std::to_string(chassis.getPose().theta);
     console.print(str);
 
+    lights.lightsOn = intake.sortEnabled;
 
     // Alliance Stake Macro
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
@@ -201,9 +204,9 @@ void opcontrol() {
     
     // Intake control
     intake.setDirection(
-      controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? 127
-      : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? -127
-      : 0
+      controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? lib::Dir::In
+      : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? lib::Dir::Out
+      : lib::Dir::Idle
     );
 
 
@@ -225,7 +228,6 @@ void opcontrol() {
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
       intake.sortEnabled = !intake.sortEnabled;
-      lights.lightsOn = intake.sortEnabled;
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
@@ -234,7 +236,7 @@ void opcontrol() {
 
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
-      lift.setTarget(20);
+      lift.setTarget(19.5);
       intake.setJamMode(lib::Jam::Tap);
     }
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // manually drive down

@@ -20,7 +20,7 @@ private:
 public:
     int startTime = -1;
     float brightness = 0.7;
-    bool lightsOn = true;
+    bool lightsOn = false;
 
     void loop() override;
 
