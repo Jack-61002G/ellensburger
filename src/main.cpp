@@ -21,7 +21,8 @@ rd::Selector selector({
   {"red ring", redRingSide},
   {"blue ring", blueRingSide},
   {"red AWP", redSoloAWP},
-  {"blue AWP", blueSoloAWP}
+  {"blue AWP", blueSoloAWP},
+  {"red goal safe", redGoalSide}
 }); 
 
 rd::Console console;
@@ -152,8 +153,6 @@ void autonomous() {
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
   lights.lightsOn = true;
 
-  redGoalSide();
-  return;
   selector.run_auton();
 }
 
@@ -201,13 +200,15 @@ void opcontrol() {
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
     
-    
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      lift.setTarget(160);
+    } else {
     // Intake control
     intake.setDirection(
       controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) ? lib::Dir::In
       : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? lib::Dir::Out
       : lib::Dir::Idle
-    );
+    );}
 
 
     // Doinker and clamp
