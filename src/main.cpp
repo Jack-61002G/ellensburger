@@ -23,7 +23,9 @@ rd::Selector selector({
   {"red AWP", redSoloAWP},
   {"blue AWP", blueSoloAWP},
   {"red goal safe", redGoalSide},
-  {"blue goal safe", blueGoalSide}
+  {"blue goal safe", blueGoalSide},
+  {"red move off line", takeAnL},
+  {"blue move off line", takeAnL}
 }); 
 
 rd::Console console;
