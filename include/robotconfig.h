@@ -1,6 +1,7 @@
 #pragma once
 #include "lemlib/api.hpp"
 #include "lemlib/asset.hpp"
+#include "lib/lights.hpp"
 #include "main.h"
 #include "lib/color.hpp"
 #include "lib/intake.hpp"
@@ -112,4 +113,10 @@ inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);
 inline pros::adi::Pneumatics wheelsUpPiston('A', false);
 
-inline lib::Lights lights = lib::Lights();
+
+
+std::vector<int> blueGradient = interpolateDouble(HSV(120, 1, 1), HSV(300, 1, 1), 50);
+std::vector<int> redGradient = interpolateDouble(HSV(325, 1, 1), HSV(390, 1, 1), 50);
+inline lib::FlowingGradient leftDriveLed('A', 32, redGradient, blueGradient);
+inline lib::FlowingGradient rightDriveLed('B', 32, redGradient, blueGradient);
+inline lib::FlowingGradient alignerLed('C', 32, redGradient, blueGradient);

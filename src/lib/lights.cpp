@@ -1,104 +1,84 @@
 #include "lib/lights.hpp"
+#include "pros/rtos.hpp"
 #include "robotconfig.h"
 #include <cmath>
+#include <memory>
 #include <string>
 #include <vector>
 
 
 
-struct RGB {
-    uint8_t r, g, b;
-    RGB(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
-};
-struct HSV {
-    double h; // Range: 0-360 (degrees)
-    double s; // Range: 0-1 (percentage, normalized)
-    double v; // Range: 0-1 (percentage, normalized)
-    HSV(double h, double s, double v) : h(h), s(s), v(v) {}
-};
-
-
-
-HSV rgbToHsv(const RGB& rgb) {
-    // Normalize RGB values to the range [0, 1]
-    double r = rgb.r / 255.0;
-    double g = rgb.g / 255.0;
-    double b = rgb.b / 255.0;
-
-    // Find the min and max values among r, g, and b
-    double maxVal = std::max({r, g, b});
-    double minVal = std::min({r, g, b});
-    double delta = maxVal - minVal;
-
-    HSV hsv(0, 0, 0);
-    hsv.v = maxVal; // Value component
-
-    // Compute saturation
-    if (maxVal == 0) {
-        hsv.s = 0; // If max is 0, saturation is 0 (black color)
-    } else {
-        hsv.s = delta / maxVal;
-    }
-
-    // Compute hue
-    if (delta == 0) {
-        hsv.h = 0; // If no difference, hue is undefined (set to 0)
-    } else {
-        if (maxVal == r) {
-            hsv.h = 60.0 * (fmod(((g - b) / delta), 6));
-        } else if (maxVal == g) {
-            hsv.h = 60.0 * (((b - r) / delta) + 2);
-        } else if (maxVal == b) {
-            hsv.h = 60.0 * (((r - g) / delta) + 4);
-        }
-
-        if (hsv.h < 0) {
-            hsv.h += 360.0; // Ensure hue is non-negative
-        }
-    }
-
-    return hsv;
-}
-
-
-
-RGB hsvToRgb(const HSV& hsv) {
+RGB hsvToRgb(const HSV &hsv) {
     RGB rgb(0, 0, 0);
 
-    if (hsv.s == 0) {
-        // If saturation is 0, the color is a shade of gray
-        rgb.r = rgb.g = rgb.b = hsv.v * 255; // v is the brightness
-    } else {
-        double c = hsv.v * hsv.s; // Chroma
-        double x = c * (1 - std::fabs(fmod(hsv.h / 60.0, 2) - 1));
-        double m = hsv.v - c; // Match value
-
-        double r, g, b;
-
-        // Determine the RGB components based on the hue value
-        if (hsv.h >= 0 && hsv.h < 60) {
-            r = c; g = x; b = 0;
-        } else if (hsv.h >= 60 && hsv.h < 120) {
-            r = x; g = c; b = 0;
-        } else if (hsv.h >= 120 && hsv.h < 180) {
-            r = 0; g = c; b = x;
-        } else if (hsv.h >= 180 && hsv.h < 240) {
-            r = 0; g = x; b = c;
-        } else if (hsv.h >= 240 && hsv.h < 300) {
-            r = x; g = 0; b = c;
-        } else { // hsv.h >= 300 && hsv.h < 360
-            r = c; g = 0; b = x;
-        }
-
-        // Adjust the RGB values by adding m
-        rgb.r = (r + m) * 255;
-        rgb.g = (g + m) * 255;
-        rgb.b = (b + m) * 255;
+    if (hsv.s == 0) { // zero saturation
+        rgb.r = rgb.g = rgb.b = hsv.v * 255;
+        return rgb;
     }
+    
+    double c = hsv.v * hsv.s; // Chroma
+    double x = c * (1 - fabs(fmod(hsv.h / 60.0, 2) - 1));
+    double m = hsv.v - c; // Match value
+
+    double r, g, b;
+
+    // Determine the RGB components based on the hue value
+    if (hsv.h >= 0 && hsv.h < 60) {
+        r = c; g = x; b = 0;
+    } else if (hsv.h >= 60 && hsv.h < 120) {
+        r = x; g = c; b = 0;
+    } else if (hsv.h >= 120 && hsv.h < 180) {
+        r = 0; g = c; b = x;
+    } else if (hsv.h >= 180 && hsv.h < 240) {
+        r = 0; g = x; b = c;
+    } else if (hsv.h >= 240 && hsv.h < 300) {
+        r = x; g = 0; b = c;
+    } else { // hsv.h >= 300 && hsv.h < 360
+        r = c; g = 0; b = x;
+    }
+
+    // Adjust the RGB values by adding m
+    rgb.r = (r + m) * 255;
+    rgb.g = (g + m) * 255;
+    rgb.b = (b + m) * 255;
 
     return rgb;
 }
 
+
+int RgbToHex(RGB color) {
+    return (static_cast<uint32_t>(color.r) << 16) | (static_cast<uint32_t>(color.g) << 8) | static_cast<uint32_t>(color.b);
+}
+
+
+std::vector<int> readImage(const char *filename) {
+    FILE *f = fopen(filename, "rb");
+    unsigned char info[54];
+  
+    // read the 54-byte header
+    fread(info, sizeof(unsigned char), 54, f);
+  
+    // extract image height and width from header
+    int width = *(int *)&info[18];
+    int height = *(int *)&info[22];
+  
+    // allocate 3 bytes per pixel
+    int size = 3 * width * height;
+    unsigned char *data = new unsigned char[size];
+  
+    // read the rest of the data at once
+    fread(data, sizeof(unsigned char), size, f);
+    fclose(f);
+    
+    std::vector<int> output;
+    output.reserve(width * height);
+    int i = 0;
+    while (i < size) {
+        output.push_back(RgbToHex(RGB(data[i], data[i + 1], data[i + 2])));
+        i += 3;
+    }
+    return output;
+}
 
 
 int wrapDegrees(float degrees) {
@@ -112,149 +92,78 @@ int wrapDegrees(float degrees) {
 }
 
 
-
-int hexToDecimal(const std::string& hex) {
-    return std::stoi(hex, nullptr, 16);
+float lerpf(float from, float to, float alpha) {
+    return from * (1.0 - alpha) + to * alpha;
 }
 
 
+std::vector<int> interpolateSingle(HSV start, HSV end, int length) {
+    std::vector<int> result;
+    result.reserve(length);
 
-RGB hexToRGB(const std::string& hex) {
-    std::string cleanHex = hex;
-    if (cleanHex[0] == '#') {
-        cleanHex = cleanHex.substr(1);
+    for (int i = 0; i < length; i++) {
+        float alpha = static_cast<float>(i) / static_cast<float>(length);
+
+        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+
+        hsv.h = wrapDegrees(hsv.h);
+
+        result.emplace_back(RgbToHex(hsvToRgb(hsv)));
     }
-    
-    int r = hexToDecimal(cleanHex.substr(0, 2));
-    int g = hexToDecimal(cleanHex.substr(2, 2));
-    int b = hexToDecimal(cleanHex.substr(4, 2));
-    
-    return RGB(r, g, b);
+    return result;
 }
 
 
+std::vector<int> interpolateDouble(HSV start, HSV end, int length) {
 
-std::vector<RGB> interpolateColors(float start, float end, int stripLength) {
-    HSV color1 = HSV(start, 1, 1);
-    HSV color2 = HSV(end, 1, 1);
-    
-    std::vector<RGB> result;
-    result.reserve(stripLength * 2);
-    
-    if (stripLength == 1) {
-        result.push_back(hsvToRgb(color1));
-        return result;
+    if (length % 2 == 1) { length++; }
+
+    std::vector<int> result;
+    result.reserve(length);
+
+    for (int i = 0; i < length / 2; i++) {
+        float alpha = static_cast<float>(i) / static_cast<float>(length);
+
+        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+
+        hsv.h = wrapDegrees(hsv.h);
+
+        result.emplace_back(RgbToHex(hsvToRgb(hsv)));
     }
-    
+    for (int i = length / 2; i > 0; i--) {
+        float alpha = static_cast<float>(i) / static_cast<float>(length);
 
-    for (int i = 0; i < stripLength; ++i) {
+        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
 
-        int h = std::lerp(static_cast<float>(color1.h), static_cast<float>(color2.h), static_cast<float>(i) / stripLength);
-        int s = std::lerp(static_cast<float>(color1.s), static_cast<float>(color2.s), static_cast<float>(i) / stripLength);
-        int v = std::lerp(static_cast<float>(color1.v), static_cast<float>(color2.v), static_cast<float>(i) / stripLength);
-        
-        result.emplace_back(hsvToRgb(HSV(wrapDegrees(h), s, v)));
+        hsv.h = wrapDegrees(hsv.h);
+
+        result.emplace_back(RgbToHex(hsvToRgb(hsv)));
     }
-    for (int i = stripLength; i > 0; --i) {
-
-        int h = std::lerp(static_cast<float>(color1.h), static_cast<float>(color2.h), static_cast<float>(i) / stripLength);
-        int s = std::lerp(static_cast<float>(color1.s), static_cast<float>(color2.s), static_cast<float>(i) / stripLength);
-        int v = std::lerp(static_cast<float>(color1.v), static_cast<float>(color2.v), static_cast<float>(i) / stripLength);
-        
-        result.emplace_back(hsvToRgb(HSV(wrapDegrees(h), s, v)));
-    }
-    
     return result;
 }
 
 
 
-void lib::Lights::loop() {
-    team currentTeam = teamColor;
-    int currentWarning = 0;
-    int offset = 0;
-    
-
-
-    std::vector<RGB> blue = interpolateColors(120, 300, 50);
-    std::vector<RGB> red = interpolateColors(325, 390, 50);
-    std::vector<RGB> skills = red; //interpolateColors(260, 338, 40);
-
-
-
-    // Calculate colors
-    std::vector<uint32_t> stripColors(100);
-    for (int i = 0; i < 100; i++) {
-        RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
-        stripColors[i] = (static_cast<uint32_t>(color.r * brightness) << 16) | 
-                        (static_cast<uint32_t>(color.g * brightness) << 8) | 
-                        static_cast<uint32_t>(color.b * brightness);
+void lib::FlowingGradient::update() {
+    ticksPassed++; 
+    for (int i = 0; i < length(); i++) {
+        set_pixel(
+            teamColor == team::blue ? blueGradient[(i + ticksPassed) % blueGradient.size()]
+            : redGradient[(i + ticksPassed) % redGradient.size()],
+            i);
     }
+}
 
 
 
-    while (true) {
-        if (lightsOn) {
-
-        // set to team colors
-        if (teamColor != currentTeam && currentWarning == 0) {
-            currentTeam = teamColor;
-            for (int i = 0; i < 100; i++) {
-                RGB color = teamColor == team::red ? red[i] : teamColor == team::blue ? blue[i] : skills[i];
-                stripColors[i] = (static_cast<uint32_t>(color.r * brightness) << 16) | 
-                                (static_cast<uint32_t>(color.g * brightness) << 8) | 
-                                static_cast<uint32_t>(color.b * brightness);
-            }
-        }
-
-        // Update left strip
-        for (int i = 0; i < 40; i++) {
-            int colorIndex = (i + offset) % 100;
-            leftDriveLed.set_pixel(stripColors[colorIndex], i);
-        }
-        pros::delay(10);
-            
-        
-        // Update right strip
-        for (int i = 0; i < 40; i++) {
-            int colorIndex = (i + offset) % 100;
-            rightDriveLed.set_pixel(stripColors[colorIndex], i);
-        }
-        pros::delay(10);
-
-
-        // update aligner lights
-        for (int i = 0; i < 40; i++) {
-            int colorIndex = (i + offset) % 100;
-            alignerLed.set_pixel(stripColors[colorIndex], i);
-        }
-        pros::delay(10);
-
-
-        // update indicator
-        //if (clamp.is_extended()) {
-        //    for (int i = 0; i < 40; i++) {
-        //        int colorIndex = (i + offset) % 100;
-        //        indicatorLed1.set_pixel(stripColors[colorIndex], i);
-        //    }
-        //    pros::delay(10);
-
-        //} else {
-        //    indicatorLed1.clear();
-        //    pros::delay(10);
-        //}
-
-
-        offset = (offset + 1) % 100;
-
-        }
-        else {
-            leftDriveLed.clear();
-            pros::delay(10);
-            rightDriveLed.clear();
-            pros::delay(10);
-            alignerLed.clear();
-            pros::delay(10);
-        }
+void lib::AnimationReader::update() {
+    if (playDirection) { playPosition = std::min(playPosition + 1, animationLength); }
+    else { playPosition = std::max(int(playPosition) - 1, 0); }
+    
+    for (int i = 0; i < length(); i++) {
+        set_pixel(
+            teamColor == team::blue ? blueAnimation[i * animationLength + playPosition]
+            : redAnimation[i * animationLength + playPosition],
+            i);
     }
 }

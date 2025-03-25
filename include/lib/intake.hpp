@@ -33,8 +33,10 @@ public:
 
   Intake(pros::MotorGroup *motors, lib::Color *color) : motors(motors), color(color) {}
 
+
   void loop() override;
         
+  
   void setDirection(Dir dir) {
     int8_t volts = (dir == Dir::In) ? 127 : (dir == Dir::Out) ? -127 : 0;
     if (target_v != volts) {

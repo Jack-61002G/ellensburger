@@ -133,8 +133,6 @@ void initialize() {
 
   chassis.calibrate();
   pros::delay(500);
-
-  lights.startTask();
 }
 
 
@@ -154,7 +152,6 @@ void autonomous() {
   intake.startTask();
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
-  lights.lightsOn = true;
 
   selector.run_auton();
 }
@@ -162,7 +159,7 @@ void autonomous() {
 
 
 void opcontrol() {
-
+  
   console.focus();
   intake.startTask();
   lift.startTask();
@@ -186,8 +183,6 @@ void opcontrol() {
                                std::to_string(chassis.getPose().theta);
     console.print(str);
 
-    lights.lightsOn = intake.sortEnabled;
-
     // Alliance Stake Macro
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       chassis.tank(-65, -65);
@@ -197,7 +192,6 @@ void opcontrol() {
       pros::delay(270);
       liftButtonHeld = false;
     }
-
 
     // Drive control
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
