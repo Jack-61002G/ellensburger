@@ -1,6 +1,5 @@
 #pragma once
 #include "lemlib/api.hpp"
-#include "lemlib/asset.hpp"
 #include "lib/lights.hpp"
 #include "main.h"
 #include "lib/color.hpp"
@@ -13,6 +12,9 @@
 #include "pros/optical.h"
 #include "pros/rotation.hpp"
 #include "robodash/views/selector.hpp"
+#include "robotconfig.h"
+#include <iostream>
+#include <vector>
 
 enum class team {red, blue, none};
 inline team teamColor = team::none;
@@ -23,19 +25,19 @@ inline bool liftButtonHeld = false;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-inline pros::MotorGroup leftMotors({-11, -13, -15}, pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-inline pros::MotorGroup rightMotors({18, 19, 20}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
+inline pros::MotorGroup leftMotors({-1, 2, -3}, pros::MotorGearset::blue); // left motor group - ports 3 (reversed), 4, 5 (reversed)
+inline pros::MotorGroup rightMotors({13, 14, -15}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
-inline pros::Imu imu(17);
+inline pros::Imu imu(11);
 
 inline pros::Distance dist = pros::Distance(3);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-inline pros::Rotation horizontal(-7);
+inline pros::Rotation horizontal(17);
 inline EmaFilter filter(.9);
 
-inline pros::Rotation vertical(-14);
+inline pros::Rotation vertical(16);
 inline EmaFilter filter2(.9);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
 inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 2.015, 0);
@@ -84,7 +86,7 @@ inline lemlib::OdomSensors sensors(&verticalwheel, // vertical tracking wheel
 
 // input curve for throttle input during driver control
 inline lemlib::ExpoDriveCurve throttleCurve(0, // joystick deadband out of 127
-                                     0, // minimum output where drivetrain will move out of 127
+                                     0, // minimum output where drivetrain will move out of127
                                      1.0005 // expo curve gain
 );
 
@@ -100,23 +102,22 @@ inline lemlib::Chassis chassis(drivetrain, linearController, angularController, 
 
 inline lib::Color color = lib::Color();
 
-inline pros::MotorGroup intakeMotor({-8});
+inline pros::MotorGroup intakeMotor({-20});
 inline pros::adi::Pneumatics pisstake('G', false);
 inline lib::Intake intake(&intakeMotor, &color);
 
-inline pros::MotorGroup armMotors({2, 21}, pros::v5::MotorGears::red);
-inline pros::Rotation armrot(6);
-
-inline lib::Lift lift = lib::Lift();
+inline pros::MotorGroup armMotors({-18}, pros::v5::MotorGears::red);
+inline pros::Rotation armrot(19);
+inline lib::Lift lift = lib::Lift(&armMotors, &armrot);
 
 inline pros::adi::Pneumatics doinker('C', false);
 inline pros::adi::Pneumatics clamp('B', false);
 inline pros::adi::Pneumatics wheelsUpPiston('A', false);
 
+inline std::vector<int> blueGradient = interpolateDouble(HSV(120, 1, 1), HSV(300, 1, 1), 100);
+inline std::vector<int> redGradient = interpolateDouble(HSV(325, 1, 1), HSV(390, 1, 1), 100);
+inline std::vector<int> grayscale = interpolateDouble(HSV(0, 1, 0), HSV(0, 1, 1), 100);
 
-
-std::vector<int> blueGradient = interpolateDouble(HSV(120, 1, 1), HSV(300, 1, 1), 50);
-std::vector<int> redGradient = interpolateDouble(HSV(325, 1, 1), HSV(390, 1, 1), 50);
-inline lib::FlowingGradient leftDriveLed('A', 32, redGradient, blueGradient);
+inline lib::BreathingGradient leftDriveLed('A', 32, grayscale, grayscale);
 inline lib::FlowingGradient rightDriveLed('B', 32, redGradient, blueGradient);
 inline lib::FlowingGradient alignerLed('C', 32, redGradient, blueGradient);

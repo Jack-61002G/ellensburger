@@ -1,48 +1,47 @@
 #include "lib/lights.hpp"
-#include "pros/rtos.hpp"
 #include "robotconfig.h"
 #include <cmath>
-#include <memory>
-#include <string>
 #include <vector>
 
 
 
-RGB hsvToRgb(const HSV &hsv) {
-    RGB rgb(0, 0, 0);
+RGB hsvToRgb(HSV color) {
+    RGB output(0, 0, 0);
 
-    if (hsv.s == 0) { // zero saturation
-        rgb.r = rgb.g = rgb.b = hsv.v * 255;
-        return rgb;
+    // Ensure the hue is between 0 and 360 degrees
+    color.h = fmod(color.h, 360);
+    if (color.h < 0) color.h += 360;
+
+    // Handle the case where saturation is 0 (it's a shade of gray)
+    if (color.s == 0) {
+        output.r = output.g = output.b = color.v * 255; // All the same value
+    } else {
+        // Normalize hue to [0, 360]
+        color.h /= 60.0f;
+        int i = static_cast<int>(color.h);
+        float f = color.h - i;
+        float p = color.v * (1 - color.s);
+        float q = color.v * (1 - f * color.s);
+        float t = color.v * (1 - (1 - f) * color.s);
+
+        // Assign colors based on the sector
+        switch (i) {
+            case 0: output.r = color.v, output.g = t, output.b = p; break;
+            case 1: output.r = q, output.g = color.v, output.b = p; break;
+            case 2: output.r = p, output.g = color.v, output.b = t; break;
+            case 3: output.r = p, output.g = q, output.b = color.v; break;
+            case 4: output.r = t, output.g = p, output.b = color.v; break;
+            case 5: output.r = color.v, output.g = p, output.b = q; break;
+        }
+
+        // Scale the RGB values to [0, 255]
+        output.r *= 255;
+        output.g *= 255;
+        output.b *= 255;
     }
-    
-    double c = hsv.v * hsv.s; // Chroma
-    double x = c * (1 - fabs(fmod(hsv.h / 60.0, 2) - 1));
-    double m = hsv.v - c; // Match value
 
-    double r, g, b;
-
-    // Determine the RGB components based on the hue value
-    if (hsv.h >= 0 && hsv.h < 60) {
-        r = c; g = x; b = 0;
-    } else if (hsv.h >= 60 && hsv.h < 120) {
-        r = x; g = c; b = 0;
-    } else if (hsv.h >= 120 && hsv.h < 180) {
-        r = 0; g = c; b = x;
-    } else if (hsv.h >= 180 && hsv.h < 240) {
-        r = 0; g = x; b = c;
-    } else if (hsv.h >= 240 && hsv.h < 300) {
-        r = x; g = 0; b = c;
-    } else { // hsv.h >= 300 && hsv.h < 360
-        r = c; g = 0; b = x;
-    }
-
-    // Adjust the RGB values by adding m
-    rgb.r = (r + m) * 255;
-    rgb.g = (g + m) * 255;
-    rgb.b = (b + m) * 255;
-
-    return rgb;
+    // Return the result as an RGB struct
+    return output;
 }
 
 
@@ -152,6 +151,14 @@ void lib::FlowingGradient::update() {
             : redGradient[(i + ticksPassed) % redGradient.size()],
             i);
     }
+}
+
+
+
+void lib::BreathingGradient::update() {
+    ticksPassed++; 
+    set_all( teamColor == team::blue ? blueGradient[ticksPassed % blueGradient.size()]
+            : redGradient[ticksPassed % redGradient.size()]);
 }
 
 

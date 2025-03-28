@@ -16,8 +16,8 @@ class Lift : public ryan::TaskWrapper {
 
 private:
 
-  pros::MotorGroup motors = pros::MotorGroup({-2, 21});
-  pros::Rotation rotation = pros::Rotation(6);
+  std::shared_ptr<pros::MotorGroup> motors;
+  std::shared_ptr<pros::Rotation> rotation;
 
   LiftStates state = LiftStates::Hold;
   PID pid = PID(3, 0, 15);
@@ -26,25 +26,26 @@ private:
 
 
 public:
+  Lift(pros::MotorGroup* motors, pros::Rotation* rotation) : motors(motors), rotation(rotation) {}
 
   void loop() override {
-    motors.set_brake_mode_all(pros::MotorBrake::hold);
+    motors->set_brake_mode_all(pros::MotorBrake::hold);
 
     while (true) {
-      float position = rotation.get_angle() / 100.0;
+      float position = rotation->get_angle() / 100.0;
       if (position > 330) { position -= 360; }
 
       switch (state) {
       case LiftStates::Voltage:
-        motors.move(target);
+        motors->move(target);
         break;
 
       case LiftStates::Position:
-        motors.move(pid.compute(target - position));
+        motors->move(pid.compute(target - position));
         break;
 
       case LiftStates::Hold:
-        motors.brake();
+        motors->brake();
         break;
       }
 
@@ -58,6 +59,6 @@ public:
 
   void setVoltage(float newVoltage) { target = newVoltage; state = LiftStates::Voltage; }
 
-  float getAngle() { return rotation.get_angle() / 100.0; };
+  float getAngle() { return rotation->get_angle() / 100.0; };
 };
 } // namespace lib

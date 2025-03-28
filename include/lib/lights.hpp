@@ -1,8 +1,6 @@
 #pragma once
 #include "pros/adi.hpp"
 #include "lib/TaskWrapper.hpp"
-#include <algorithm>
-#include <cmath>
 #include <vector>
 
 
@@ -20,7 +18,7 @@ struct HSV {
 
 
 
-RGB hsvToRgb(const HSV& hsv);
+RGB hsvToRgb(HSV color);
 
 int RgbToHex(RGB color);
 
@@ -77,6 +75,22 @@ protected:
 
 public:
     FlowingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient, uint delay = 10)
+    : Light(port, length, delay), redGradient(redGradient), blueGradient(blueGradient) {}
+};
+
+
+
+class BreathingGradient : public Light {
+protected:
+    uint ticksPassed = 0;
+
+    std::vector<int> blueGradient;
+    std::vector<int> redGradient;
+
+    void update() override;
+
+public:
+    BreathingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient, uint delay = 10)
     : Light(port, length, delay), redGradient(redGradient), blueGradient(blueGradient) {}
 };
 
