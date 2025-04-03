@@ -18,7 +18,7 @@ struct HSV {
 
 
 
-RGB hsvToRgb(HSV color);
+RGB hsvToRgb(const HSV &hsv);
 
 int RgbToHex(RGB color);
 

@@ -116,8 +116,8 @@ inline pros::adi::Pneumatics wheelsUpPiston('A', false);
 
 inline std::vector<int> blueGradient = interpolateDouble(HSV(120, 1, 1), HSV(300, 1, 1), 100);
 inline std::vector<int> redGradient = interpolateDouble(HSV(325, 1, 1), HSV(390, 1, 1), 100);
-inline std::vector<int> grayscale = interpolateDouble(HSV(0, 1, 0), HSV(0, 1, 1), 100);
+inline std::vector<int> rainbow = interpolateSingle(HSV(0, 0.8, 0.8), HSV(360, 0.8, 0.8), 200);
 
-inline lib::BreathingGradient leftDriveLed('A', 32, grayscale, grayscale);
-inline lib::FlowingGradient rightDriveLed('B', 32, redGradient, blueGradient);
-inline lib::FlowingGradient alignerLed('C', 32, redGradient, blueGradient);
+inline lib::FlowingGradient armBraceLeds('A', 33, redGradient, blueGradient);
+//inline lib::FlowingGradient rightDriveLed('B', 32, redGradient, blueGradient);
+//inline lib::FlowingGradient alignerLed('C', 32, redGradient, blueGradient);
