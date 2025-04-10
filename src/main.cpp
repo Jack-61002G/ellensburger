@@ -10,22 +10,15 @@
 #include "robodash/views/console.hpp"
 #include "robotconfig.h"
 #include "lib/reset.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <string>
+#include <vector>
 
 
 
 rd::Selector selector({
-  {"skills", skills},
-  {"red ring", redRingSide},
-  {"blue ring", blueRingSide},
-  {"red AWP", redSoloAWP},
-  {"blue AWP", blueSoloAWP},
-  {"red goal safe", redGoalSide},
-  {"blue goal safe", blueGoalSide},
-  {"red move off line", takeAnL},
-  {"blue move off line", takeAnL}
 }); 
 
 rd::Console console;
@@ -110,12 +103,6 @@ void auton_check_loop() {
         teamColor = team::red;
       }
 
-      if (lower_name.find("mogo") != std::string::npos) {
-        pisstake.extend();
-      } else {
-        pisstake.retract();
-      }
-
       pros::delay(100);
 
       if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) || pros::competition::is_autonomous()) {
@@ -134,6 +121,7 @@ void initialize() {
   chassis.calibrate();
   pros::delay(500);
 
+  lights.startTask();
 }
 
 
@@ -147,8 +135,6 @@ void disabled() {
 
 void autonomous() {
 
-  wheelsUpPiston.retract();
-
   lift.startTask();
   intake.startTask();
 
@@ -160,12 +146,10 @@ void autonomous() {
 
 
 void opcontrol() {
-  
+
   console.focus();
   intake.startTask();
   lift.startTask();
-
-  wheelsUpPiston.extend();
 
   intake.setDirection(lib::Dir::Idle);
   intake.setJamMode(lib::Jam::Reverse);
@@ -193,10 +177,13 @@ void opcontrol() {
       pros::delay(270);
       liftButtonHeld = false;
     }
-
+    
     // Drive control
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+    double maxVal = fmax(fabs(leftMotors.get_actual_velocity()), fabs(rightMotors.get_actual_velocity()));
+    leftDriveLed.alpha = std::clamp(maxVal / 400.0, leftDriveLed.alpha, 1.0);
+    rightDriveLed.alpha = std::clamp(maxVal / 400.0, rightDriveLed.alpha, 1.0);
     
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       lift.setTarget(160);
@@ -207,14 +194,21 @@ void opcontrol() {
       : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? lib::Dir::Out
       : lib::Dir::Idle
     );}
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intakeLed.alpha = 1;
+    }
 
 
     // Doinker and clamp
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      doinker.toggle();
+      leftDoinker.toggle();
+    }
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      rightDoinker.toggle();
     }
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       clamp.toggle();
+      clampLed.alpha = 1;
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
@@ -229,30 +223,28 @@ void opcontrol() {
       intake.sortEnabled = !intake.sortEnabled;
     }
 
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-      pisstake.toggle();
-    }
-
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
-      lift.setTarget(19.5);
+      lift.setTarget(37);
       intake.setJamMode(lib::Jam::Tap);
+      armBraceLeds.alpha = 1;
     }
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // manually drive down
       liftButtonHeld = true;
       lift.setVoltage(-127);
       intake.setJamMode(lib::Jam::Reverse);
+      armBraceLeds.alpha = 1;
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // manually drive up
       liftButtonHeld = true;
       lift.setVoltage(127);
       intake.setJamMode(lib::Jam::Reverse);
+      armBraceLeds.alpha = 1;
     }
     else if (liftButtonHeld) { // set hold target when button is released
       liftButtonHeld = false;
       lift.hold();
     }
-
 
     pros::delay(15);
   }

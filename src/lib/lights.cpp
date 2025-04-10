@@ -1,5 +1,6 @@
 #include "lib/lights.hpp"
 #include "robotconfig.h"
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -94,6 +95,13 @@ float lerpf(float from, float to, float alpha) {
 }
 
 
+
+HSV lerpHSV(HSV from, HSV to, float alpha) {
+    return HSV(lerpf(from.h, to.h, alpha), lerpf(from.s, to.s, alpha), lerpf(from.v, to.v, alpha));
+}
+
+
+
 std::vector<int> interpolateSingle(HSV start, HSV end, int length) {
     std::vector<int> result;
     result.reserve(length);
@@ -109,6 +117,25 @@ std::vector<int> interpolateSingle(HSV start, HSV end, int length) {
     }
     return result;
 }
+
+
+
+std::vector<RGB> interpolateSingle2(HSV start, HSV end, int length) {
+    std::vector<RGB> result;
+    result.reserve(length);
+
+    for (int i = 0; i < length; i++) {
+        float alpha = static_cast<float>(i) / static_cast<float>(length);
+
+        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+
+        hsv.h = wrapDegrees(hsv.h);
+
+        result.emplace_back(hsvToRgb(hsv));
+    }
+    return result;
+}
+
 
 
 std::vector<int> interpolateDouble(HSV start, HSV end, int length) {
@@ -158,6 +185,16 @@ void lib::BreathingGradient::update() {
     set_all( teamColor == team::blue ? blueGradient[ticksPassed % blueGradient.size()]
             : redGradient[ticksPassed % redGradient.size()]);
 }
+
+
+
+void lib::Pulser::update() {
+    alpha = std::clamp(alpha + delta, 0.0, 1.0);
+    
+    set_all(teamColor == team::blue ? RgbToHex(hsvToRgb(lerpHSV(HSV(blue.h, blue.v, 0), blue, alpha)))
+                : RgbToHex(hsvToRgb(lerpHSV(HSV(red.h, red.v, 0), red, alpha))));
+}
+
 
 
 

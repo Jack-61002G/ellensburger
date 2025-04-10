@@ -1,4 +1,5 @@
 #pragma once
+#include "lights.hpp"
 #include "pros/adi.hpp"
 #include "lib/TaskWrapper.hpp"
 #include <vector>
@@ -30,6 +31,8 @@ float lerpf(float from, float to, float alpha);
 
 std::vector<int> interpolateSingle(HSV start, HSV end, int length);
 
+std::vector<RGB> interpolateSingle2(HSV start, HSV end, int length);
+
 std::vector<int> interpolateDouble(HSV start, HSV end, int length);
 
 
@@ -38,28 +41,49 @@ namespace lib {
 
 
 
-class Light : public pros::adi::Led, public ryan::TaskWrapper {
+class Light : public pros::adi::Led {
 protected:
     bool on = true;
-    uint tickDelay = 10;
 
 public:
-    Light(uint port, uint length, uint delay = 10)
-    : pros::adi::Led(port, length), tickDelay(delay)
-    { startTask(); }
+    Light(uint port, uint length, uint tick = 10, uint delay = 0) : pros::adi::Led(port, length) {}
 
     void turn(bool on) {
         this->on = on;
         if (!on) { clear(); }
     }
 
+    virtual void update() {}
+};
+
+
+
+class LightManager : public ryan::TaskWrapper {
+private:
+    Light* arm;
+    Light* intake;
+    Light* clamp;
+    Light* left;
+    Light* right;
+
+public:
+    LightManager(Light* arm, Light* intake, Light* clamp, Light* left, Light* right) 
+    : arm(arm), intake(intake), clamp(clamp), left(left), right(right) {}
+
     void loop() override {
         while (true) {
-            if (on) { update(); }
-            pros::delay(tickDelay);
+            arm->update();
+            pros::delay(10);
+            intake->update();
+            pros::delay(10);
+            clamp->update();
+            pros::delay(10);
+            left->update();
+            pros::delay(10);
+            right->update();
+            pros::delay(10);
         }
     }
-    virtual void update() {}
 };
 
 
@@ -74,8 +98,8 @@ protected:
     void update() override;
 
 public:
-    FlowingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient, uint delay = 10)
-    : Light(port, length, delay), redGradient(redGradient), blueGradient(blueGradient) {}
+    FlowingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient)
+    : Light(port, length), redGradient(redGradient), blueGradient(blueGradient) {}
 };
 
 
@@ -90,8 +114,24 @@ protected:
     void update() override;
 
 public:
-    BreathingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient, uint delay = 10)
-    : Light(port, length, delay), redGradient(redGradient), blueGradient(blueGradient) {}
+    BreathingGradient(uint port, uint length, std::vector<int> redGradient, std::vector<int> blueGradient)
+    : Light(port, length), redGradient(redGradient), blueGradient(blueGradient) {}
+};
+
+
+
+class Pulser : public Light {
+public:
+    double delta = -0.1;
+    double alpha = 0;
+
+    HSV red;
+    HSV blue;
+
+    void update() override;
+
+    Pulser(uint port, uint length, HSV red, HSV blue, double delta = -0.1)
+        : Light(port, length), red(red), blue(blue), delta(delta) {}
 };
 
 
@@ -108,11 +148,10 @@ protected:
     void update() override;
 
 public:
-    AnimationReader(uint port, uint length, std::vector<int> redAnimation, std::vector<int> blueAnimation, uint delay = 10)
-        : Light(port, length, delay), redAnimation(redAnimation), blueAnimation(blueAnimation)
+    AnimationReader(uint port, uint length, std::vector<int> redAnimation, std::vector<int> blueAnimation)
+        : Light(port, length), redAnimation(redAnimation), blueAnimation(blueAnimation)
         { animationLength = redAnimation.size() / length; }
 
     void setDirection(bool dir) { playDirection = dir; };
 };
-
 }

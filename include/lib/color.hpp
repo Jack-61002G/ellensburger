@@ -8,7 +8,7 @@ namespace lib {
 class Color {
 
 private:
-    pros::Optical sensor = pros::Optical(5);
+    pros::Optical sensor = pros::Optical(4);
 
 public:
     Color() {

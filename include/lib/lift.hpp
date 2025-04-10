@@ -20,7 +20,7 @@ private:
   std::shared_ptr<pros::Rotation> rotation;
 
   LiftStates state = LiftStates::Hold;
-  PID pid = PID(3, 0, 15);
+  PID pid = PID(3.25, 0, 7);
 
   float target;
 
