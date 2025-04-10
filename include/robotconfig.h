@@ -1,5 +1,6 @@
 #pragma once
 #include "lemlib/api.hpp"
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "lib/lights.hpp"
 #include "main.h"
 #include "lib/color.hpp"
@@ -15,6 +16,9 @@
 #include "robotconfig.h"
 #include <iostream>
 #include <vector>
+
+inline EmaFilter leftLightFilter(.5);
+inline EmaFilter rightLightFilter(.5);
 
 enum class team {red, blue, none};
 inline team teamColor = team::none;

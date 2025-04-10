@@ -182,8 +182,8 @@ void opcontrol() {
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
     double maxVal = fmax(fabs(leftMotors.get_actual_velocity()), fabs(rightMotors.get_actual_velocity()));
-    leftDriveLed.alpha = std::clamp(maxVal / 400.0, leftDriveLed.alpha, 1.0);
-    rightDriveLed.alpha = std::clamp(maxVal / 400.0, rightDriveLed.alpha, 1.0);
+    leftDriveLed.alpha = leftLightFilter.Run(std::clamp(maxVal / 400.0, leftDriveLed.alpha, 1.0));
+    rightDriveLed.alpha = rightLightFilter.Run(std::clamp(maxVal / 400.0, rightDriveLed.alpha, 1.0));
     
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       lift.setTarget(160);
