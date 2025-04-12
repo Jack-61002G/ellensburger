@@ -127,7 +127,7 @@ std::vector<RGB> interpolateSingle2(HSV start, HSV end, int length) {
     for (int i = 0; i < length; i++) {
         float alpha = static_cast<float>(i) / static_cast<float>(length);
 
-        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+        HSV hsv = lerpHSV(start, end, alpha);
 
         hsv.h = wrapDegrees(hsv.h);
 
@@ -148,7 +148,7 @@ std::vector<int> interpolateDouble(HSV start, HSV end, int length) {
     for (int i = 0; i < length / 2; i++) {
         float alpha = static_cast<float>(i) / static_cast<float>(length);
 
-        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+        HSV hsv = lerpHSV(start, end, alpha);
 
         hsv.h = wrapDegrees(hsv.h);
 
@@ -157,7 +157,7 @@ std::vector<int> interpolateDouble(HSV start, HSV end, int length) {
     for (int i = length / 2; i > 0; i--) {
         float alpha = static_cast<float>(i) / static_cast<float>(length);
 
-        HSV hsv(lerpf(start.h, end.h, alpha), lerpf(start.s, end.s, alpha), lerpf(start.v, end.v, alpha));
+        HSV hsv = lerpHSV(start, end, alpha);
 
         hsv.h = wrapDegrees(hsv.h);
 

@@ -117,6 +117,7 @@ inline pros::adi::Pneumatics rightDoinker('H', false);
 inline pros::adi::Pneumatics leftDoinker('G', false);
 inline pros::adi::Pneumatics clamp('F', false);
 
+
 inline std::vector<int> blueGradient = interpolateDouble(HSV(120, 0.8, 0.7), HSV(340, 0.8, 0.7), 120);
 inline std::vector<int> redGradient = interpolateDouble(HSV(310, 0.9, 0.7), HSV(400, 0.9, 0.7), 120);
 
@@ -125,11 +126,11 @@ inline std::vector<int> redGradient = interpolateDouble(HSV(310, 0.9, 0.7), HSV(
 //inline lib::FlowingGradient clampLed('C', 30, redGradient, blueGradient);
 //inline lib::FlowingGradient leftDriveLed('D', 40, redGradient, blueGradient);
 //inline lib::FlowingGradient rightDriveLed('E', 40, redGradient, blueGradient);
-inline lib::Pulser armBraceLeds('A', 33, HSV(0, 0.9, 1), HSV(200, 0.9, 1));
-inline lib::Pulser intakeLed('B', 33, HSV(0, 0.9, 1), HSV(200, 0.9, 1));
-inline lib::Pulser clampLed('C', 30, HSV(0, 0.9, 1), HSV(200, 0.9, 1));
-inline lib::Pulser leftDriveLed('D', 40, HSV(0, 0.9, 1), HSV(200, 0.9, 1), -0.07);
-inline lib::Pulser rightDriveLed('E', 40, HSV(0, 0.9, 1), HSV(200, 0.9, 1), -0.07);
-
+inline lib::Pulser armBraceLeds('A', 33, HSV(0, 0.95, 1), HSV(200, 0.9, 1), -0.08);
+inline lib::Pulser intakeLed('B', 33, HSV(0, 0.95, 1), HSV(200, 0.9, 1), -0.08);
+inline lib::Pulser clampLed('C', 30, HSV(0, 0.95, 1), HSV(200, 0.9, 1), -0.08);
+inline lib::Pulser leftDriveLed('D', 40, HSV(0, 0.95, 1), HSV(200, 0.9, 1), 0);
+inline lib::Pulser rightDriveLed('E', 40, HSV(0, 0.95, 1), HSV(200, 0.9, 1), 0);
+inline EmaFilter driveLedFilter(0.1);
 
 inline lib::LightManager lights(&armBraceLeds, &intakeLed, &clampLed, &leftDriveLed, &rightDriveLed);

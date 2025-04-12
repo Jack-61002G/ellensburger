@@ -151,8 +151,7 @@ void opcontrol() {
   intake.startTask();
   lift.startTask();
 
-  intake.setDirection(lib::Dir::Idle);
-  intake.setJamMode(lib::Jam::Reverse);
+  intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -181,10 +180,9 @@ void opcontrol() {
     // Drive control
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-    double maxVal = fmax(fabs(leftMotors.get_actual_velocity()), fabs(rightMotors.get_actual_velocity()));
-    leftDriveLed.alpha = leftLightFilter.Run(std::clamp(maxVal / 400.0, leftDriveLed.alpha, 1.0));
-    rightDriveLed.alpha = rightLightFilter.Run(std::clamp(maxVal / 400.0, rightDriveLed.alpha, 1.0));
-    
+    double output = driveLedFilter.Run(fmax(fabs(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127.0, fabs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127.0));
+    leftDriveLed.alpha = output; rightDriveLed.alpha = output;
+
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       lift.setTarget(160);
     } else {
@@ -196,6 +194,7 @@ void opcontrol() {
     );}
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intakeLed.alpha = 1;
+      armBraceLeds.alpha = 1;
     }
 
 
