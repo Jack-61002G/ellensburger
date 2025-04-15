@@ -19,6 +19,9 @@
 
 
 rd::Selector selector({
+  {"Red Ring", redRingElims},
+  {"Red Mogo", redMogo},
+  {"Red Solo AWP", redSoloAwp}
 }); 
 
 rd::Console console;
@@ -140,6 +143,9 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
+  redRingElims();
+  return;
+
   selector.run_auton();
 }
 
@@ -156,8 +162,7 @@ void opcontrol() {
   leftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
-  chassis.setPose(0, 0, 90);
-  lib::wallReset(lib::dir::X_PLUS);
+  chassis.setPose(0, 0, 0);
 
   while (true) {
 

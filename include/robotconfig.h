@@ -38,14 +38,14 @@ inline pros::Imu imu(11);
 inline pros::Distance dist = pros::Distance(3);
 
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-inline pros::Rotation horizontal(17);
+inline pros::Rotation horizontal(-17);
 inline EmaFilter filter(.9);
 
-inline pros::Rotation vertical(16);
+inline pros::Rotation vertical(-16);
 inline EmaFilter filter2(.9);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
 inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 2.015, 0);
-inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 2.028, 0.138);
+inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 2.028, -1.5);
 
 // drivetrain settings
 inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
@@ -59,11 +59,11 @@ inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
 // lateral motion controller
 inline lemlib::ControllerSettings linearController(6.125, // proportional gain (kP)
                                             0.01, // integral gain (kI)
-                                            1, // derivative gain (kD)
+                                            1.25, // derivative gain (kD)
                                             3, // anti windup
                                             .5, // small error range, in inches
                                             35, // small error range timeout, in milliseconds
-                                            1.5, // large error range, in inches
+                                            1.0, // large error range, in inches
                                             160, // large error range timeout, in milliseconds
                                             7 // maximum acceleration (slew)
 );
@@ -73,9 +73,9 @@ inline lemlib::ControllerSettings angularController(4.7, // proportional gain (k
                                              0.01, // integral gain (kI)
                                              48, // derivative gain (kD)
                                              3, // anti windup
-                                             2, // small error range, in degrees
+                                             1.5, // small error range, in degrees
                                              35, // small error range timeout, in milliseconds
-                                             5, // large error range, in degrees
+                                             3, // large error range, in degrees
                                              100, // large error range timeout, in milliseconds
                                              0 // maximum acceleration (slew)
 );
