@@ -45,7 +45,7 @@ inline pros::Rotation vertical(-16);
 inline EmaFilter filter2(.9);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
 inline lemlib::TrackingWheel verticalwheel(&vertical, &filter2, 2.015, 0);
-inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 2.028, -1.5);
+inline lemlib::TrackingWheel horizontalwheel(&horizontal, &filter, 2.028, 1.5);
 
 // drivetrain settings
 inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
@@ -53,7 +53,7 @@ inline lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               12, // 10 inch track width
                               lemlib::Omniwheel::NEW_275, // using new 4" omnis
                               450, // drivetrain rpm is 360
-                              2 // horizontal drift is 2. If we had traction wheels, it would have been 8
+                              6 // horizontal drift is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -69,9 +69,9 @@ inline lemlib::ControllerSettings linearController(6.125, // proportional gain (
 );
 
 // angular motion controller
-inline lemlib::ControllerSettings angularController(4.7, // proportional gain (kP)
+inline lemlib::ControllerSettings angularController(4.6, // proportional gain (kP)
                                              0.01, // integral gain (kI)
-                                             48, // derivative gain (kD)
+                                             52, // derivative gain (kD)
                                              3, // anti windup
                                              1.5, // small error range, in degrees
                                              35, // small error range timeout, in milliseconds
@@ -109,8 +109,8 @@ inline lib::Color color = lib::Color();
 inline pros::MotorGroup intakeMotor({-20});
 inline lib::Intake intake(&intakeMotor, &color);
 
-inline pros::MotorGroup armMotors({-18}, pros::v5::MotorGears::red);
-inline pros::Rotation armrot(19);
+inline pros::MotorGroup armMotors({-18,19}, pros::v5::MotorGears::red);
+inline pros::Rotation armrot(9);
 inline lib::Lift lift = lib::Lift(&armMotors, &armrot);
 
 inline pros::adi::Pneumatics rightDoinker('H', false);

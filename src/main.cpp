@@ -143,7 +143,7 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  redRingElims();
+  redRingSide();
   return;
 
   selector.run_auton();
@@ -189,7 +189,7 @@ void opcontrol() {
     leftDriveLed.alpha = output; rightDriveLed.alpha = output;
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      lift.setTarget(160);
+      lift.setTarget(170);
     } else {
     // Intake control
     intake.setDirection(
@@ -229,7 +229,7 @@ void opcontrol() {
 
     // Lift control
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
-      lift.setTarget(37);
+      lift.setTarget(34);
       intake.setJamMode(lib::Jam::Tap);
       armBraceLeds.alpha = 1;
     }

@@ -1,6 +1,6 @@
 #include "lemlib/chassis/chassis.hpp"
+#include "pros/rtos.hpp"
 #include "robotconfig.h"
-
 
 
 
@@ -40,6 +40,75 @@ inline void redRingElims() {
   chassis.moveToPoint(-48, -24, 2000, {.maxSpeed = 60});
   chassis.waitUntilDone();
   intake.setDirection(lib::Dir::Idle);
+}
+
+
+
+inline void redRingSide() {
+  chassis.setPose(-56, 14, -90);
+  chassis.moveToPoint(-56, 14, 100);
+
+  // score on alliance stake
+  chassis.turnToHeading(-140, 1000);
+
+  lift.setTarget(215);
+  chassis.waitUntilDone();
+  
+  // clamp goal
+  chassis.moveToPoint(-48, 24, 1000, {.forwards = false, .minSpeed = 90, .earlyExitRange = 6});
+  chassis.moveToPoint(-26, 19.5, 1000, {.forwards = false, .minSpeed = 60, .earlyExitRange = 4});
+  lift.setTarget(75);
+
+  chassis.waitUntilDone();
+  clamp.extend();
+
+  // intake quad stack
+  pros::delay(50);
+  chassis.moveToPoint(-13.5, 32, 1200, {.maxSpeed = 80});
+  intake.setDirection(lib::Dir::In);
+
+  chassis.turnToPoint(-12.5, 48, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(-12.5, 48, 1500, {.maxSpeed = 100});
+
+  chassis.waitUntilDone();
+
+  // back out
+  chassis.moveToPoint(-24, 48, 1000, {.maxSpeed = 80, .minSpeed = 30, .earlyExitRange = 6});
+  
+  chassis.turnToPoint(-71, 65.5, 1000);
+  chassis.moveToPoint(-71, 65.5, 2500, {.maxSpeed = 68});
+
+  intake.setState(lib::Dir::In, lib::Jam::None, true);
+
+  chassis.waitUntilDone();
+  pros::delay(200);
+
+  chassis.moveToPoint(-49, 52, 1000, {.forwards = false});
+  chassis.moveToPoint(-70, 70, 1000);
+
+  chassis.moveToPoint(-48, 48, 2000, {.forwards = false, .maxSpeed = 90});
+  chassis.turnToPoint(-53, 21, 1000);
+  chassis.moveToPoint(-53, 21, 1500, {.maxSpeed = 90});
+  chassis.waitUntil(28.5);
+
+  leftDoinker.extend();
+  pros::delay(800);
+
+  chassis.turnToPoint(-26, 6, 1000);
+  chassis.waitUntilDone();
+  leftDoinker.retract();
+  chassis.moveToPoint(-30, 6, 1000, {.maxSpeed = 55});
+
+  // get alliance stake stack
+  //chassis.turnToPoint(-50, 12, 500);
+  //chassis.moveToPoint(-50, 12, 1500, {.minSpeed = 40, .earlyExitRange = 4});
+  //chassis.moveToPoint(-46, -6, 1500, {.maxSpeed = 50});
+
+  //intake.setJamMode(lib::Jam::Reverse);
+
+  //chassis.turnToPoint(-24, 0, 750, {.minSpeed = 50, .earlyExitRange = 5});
+  //lift.setTarget(200);
+  //chassis.moveToPoint(-24, 0, 1000, {.maxSpeed = 50});
 }
 
 
