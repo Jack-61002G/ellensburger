@@ -69,25 +69,25 @@ inline void redMogo() {
 
   chassis.turnToPoint(-24, -24, 1000, {.forwards = false});
   chassis.moveToPoint(-24, -24, 1000, {.forwards = false, .maxSpeed = 90});
-  chassis.waitUntilDone();
+  chassis.waitUntil(21);
   clamp.extend();
+  chassis.waitUntilDone();
   intake.setDirection(lib::Dir::In);
 
-  chassis.turnToPoint(-12, -16, 1000);
-
-  chassis.moveToPoint(-12, -16, 1000);
-  pros::delay(300);
+  chassis.turnToPoint(-18.5, -12.5, 1000);
+  chassis.moveToPoint(-18.5, -12.5, 1000);
+  chassis.turnToPoint(0, -5, 1000);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
 
+  leftDoinker.extend();
+  pros::delay(500);
+
+  chassis.turnToPoint(0, 5.5, 1000);
   rightDoinker.extend();
   pros::delay(300);
 
-  chassis.turnToPoint(0, -4, 1000);
-  leftDoinker.extend();
-  pros::delay(300);
-
-  chassis.moveToPoint(-36, -36, 1000, {.forwards = false});
+  chassis.moveToPoint(-36, -36, 1000, {.forwards = false, .maxSpeed = 90});
   chassis.waitUntilDone();
   intake.setDirection(lib::Dir::In);
 
@@ -95,7 +95,7 @@ inline void redMogo() {
   rightDoinker.retract();
   pros::delay(250);
 
-  chassis.moveToPoint(-20, -30, 1000);
+  chassis.moveToPoint(-22, -28, 1000);
   chassis.moveToPoint(-30, -20, 1000);
 
   chassis.turnToPoint(-24, -48, 1000);
