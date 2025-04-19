@@ -19,7 +19,7 @@
 
 
 rd::Selector selector({
-  {"Red Ring", redRingElims},
+  {"Red Ring", redRingSide},
   {"Red Mogo", redMogo},
   {"Red Solo AWP", redSoloAwp}
 }); 
@@ -143,7 +143,7 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  redRingSide();
+  redMogo();
   return;
 
   selector.run_auton();
