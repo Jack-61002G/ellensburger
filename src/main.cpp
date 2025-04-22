@@ -143,7 +143,7 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  redMogo();
+  redSoloAwp();
   return;
 
   selector.run_auton();
