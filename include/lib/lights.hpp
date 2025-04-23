@@ -54,6 +54,7 @@ public:
     }
 
     virtual void update() {}
+    virtual void abstractInput(double input) {}
 };
 
 
@@ -70,20 +71,7 @@ public:
     LightManager(Light* arm, Light* intake, Light* clamp, Light* left, Light* right) 
     : arm(arm), intake(intake), clamp(clamp), left(left), right(right) {}
 
-    void loop() override {
-        while (true) {
-            arm->update();
-            pros::delay(10);
-            intake->update();
-            pros::delay(10);
-            clamp->update();
-            pros::delay(10);
-            left->update();
-            pros::delay(10);
-            right->update();
-            pros::delay(10);
-        }
-    }
+    void loop() override;
 };
 
 
@@ -130,8 +118,26 @@ public:
 
     void update() override;
 
+    void abstractInput(double input) override { alpha = std::max(alpha, input); }
+
     Pulser(uint port, uint length, HSV red, HSV blue, double delta = -0.1)
         : Light(port, length), red(red), blue(blue), delta(delta) {}
+};
+
+
+
+class EmaPulser : public Light {
+public:
+    double alpha = 0;
+
+    HSV red;
+    HSV blue;
+
+    void update() override { return; };
+    void abstractInput(double input) override;
+
+    EmaPulser(uint port, uint length, HSV red, HSV blue)
+        : Light(port, length), red(red), blue(blue) {}
 };
 
 

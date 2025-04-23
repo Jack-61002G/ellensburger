@@ -143,7 +143,7 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  redSoloAwp();
+  redMogo();
   return;
 
   selector.run_auton();
@@ -185,8 +185,6 @@ void opcontrol() {
     // Drive control
     chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-    double output = driveLedFilter.Run(fmax(fabs(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) / 127.0, fabs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127.0));
-    leftDriveLed.alpha = output; rightDriveLed.alpha = output;
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       lift.setTarget(170);
@@ -197,10 +195,6 @@ void opcontrol() {
       : (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) ? lib::Dir::Out
       : lib::Dir::Idle
     );}
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      intakeLed.alpha = 1;
-      armBraceLeds.alpha = 1;
-    }
 
 
     // Doinker and clamp
@@ -212,7 +206,7 @@ void opcontrol() {
     }
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       clamp.toggle();
-      clampLed.alpha = 1;
+      if (clamp.is_extended()) {controller.rumble("."); }
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
@@ -231,19 +225,16 @@ void opcontrol() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { // reset to loading position
       lift.setTarget(34);
       intake.setJamMode(lib::Jam::Tap);
-      armBraceLeds.alpha = 1;
     }
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // manually drive down
       liftButtonHeld = true;
       lift.setVoltage(-127);
       intake.setJamMode(lib::Jam::Reverse);
-      armBraceLeds.alpha = 1;
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // manually drive up
       liftButtonHeld = true;
       lift.setVoltage(127);
       intake.setJamMode(lib::Jam::Reverse);
-      armBraceLeds.alpha = 1;
     }
     else if (liftButtonHeld) { // set hold target when button is released
       liftButtonHeld = false;

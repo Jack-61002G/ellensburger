@@ -1,4 +1,5 @@
 #include "lib/lights.hpp"
+#include "pros/misc.h"
 #include "robotconfig.h"
 #include <algorithm>
 #include <cmath>
@@ -168,6 +169,30 @@ std::vector<int> interpolateDouble(HSV start, HSV end, int length) {
 
 
 
+void lib::LightManager::loop() {
+    while (true) {
+        arm->abstractInput(1.0 ? controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y) 
+                        || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)
+                        || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) : 0.0);
+        arm->update();
+        pros::delay(10);
+        intake->abstractInput(1.0 ? controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) || controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) : 0.0);
+        intake->update();
+        pros::delay(10);
+        clamp->abstractInput(1.0 ? controller.get_digital(pros::E_CONTROLLER_DIGITAL_B) : 0.0);
+        clamp->update();
+        pros::delay(10);
+        left->abstractInput(std::max(abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))) / 100.0);
+        left->update();
+        pros::delay(10);
+        right->abstractInput(std::max(abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)), abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))) / 100.0);
+        right->update();
+        pros::delay(10);
+    }
+}
+
+
+
 void lib::FlowingGradient::update() {
     ticksPassed++; 
     for (int i = 0; i < length(); i++) {
@@ -191,10 +216,17 @@ void lib::BreathingGradient::update() {
 void lib::Pulser::update() {
     alpha = std::clamp(alpha + delta, 0.0, 1.0);
     
+    set_all(teamColor == team::blue ? RgbToHex(hsvToRgb(lerpHSV(HSV(blue.h, blue.s, 0), blue, alpha)))
+                : RgbToHex(hsvToRgb(lerpHSV(HSV(red.h, red.s, 0), red, alpha))));
+}
+
+
+
+void lib::EmaPulser::abstractInput(double input) {
+    alpha = lerpf(alpha, fmin(1.0, input), 0.1);
     set_all(teamColor == team::blue ? RgbToHex(hsvToRgb(lerpHSV(HSV(blue.h, blue.v, 0), blue, alpha)))
                 : RgbToHex(hsvToRgb(lerpHSV(HSV(red.h, red.v, 0), red, alpha))));
 }
-
 
 
 

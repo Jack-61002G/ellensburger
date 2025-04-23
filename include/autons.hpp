@@ -68,24 +68,26 @@ inline void redMogo() {
   chassis.setPose(-55.5, -24, -90);
 
   chassis.turnToPoint(-24, -24, 1000, {.forwards = false});
-  chassis.moveToPoint(-24, -24, 1000, {.forwards = false, .maxSpeed = 90});
+  chassis.moveToPoint(-24, -24, 1000, {.forwards = false, .maxSpeed = 70});
   chassis.waitUntil(21);
+  intake.setDirection(lib::Dir::In);
+  chassis.waitUntil(21.75);
   clamp.extend();
   chassis.waitUntilDone();
-  intake.setDirection(lib::Dir::In);
 
-  chassis.turnToPoint(-18.5, -12.5, 1000);
-  chassis.moveToPoint(-18.5, -12.5, 1000);
-  chassis.turnToPoint(0, -5, 1000);
+  chassis.turnToPoint(-21.3, -16.5, 1000);
+  chassis.moveToPoint(-21.3, -16.5, 1000, {.maxSpeed = 90});
+  pros::delay(200);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
 
-  leftDoinker.extend();
-  pros::delay(500);
-
-  chassis.turnToPoint(0, 5.5, 1000);
   rightDoinker.extend();
-  pros::delay(300);
+  pros::delay(200);
+
+  chassis.swingToPoint(0, -5.5, lemlib::DriveSide::RIGHT, 750);
+  chassis.waitUntilDone();
+  leftDoinker.extend();
+  pros::delay(200);
 
   chassis.moveToPoint(-36, -36, 1000, {.forwards = false, .maxSpeed = 90});
   chassis.waitUntilDone();
@@ -93,21 +95,22 @@ inline void redMogo() {
 
   leftDoinker.retract();
   rightDoinker.retract();
-  pros::delay(250);
+  pros::delay(200);
 
   chassis.moveToPoint(-22, -28, 1000);
-  chassis.moveToPoint(-30, -20, 1000);
+  chassis.moveToPoint(-33, -17, 1000);
 
-  chassis.turnToPoint(-24, -48, 1000);
-  chassis.moveToPoint(-24, -48, 1000);
+  chassis.turnToPoint(-27, -49, 1000, {.maxSpeed = 85});
+  chassis.moveToPoint(-27, -49, 1000);
 
-  chassis.turnToPoint(-70, -70, 1000);
-  chassis.moveToPoint(-70, -70, 1000);
+  chassis.turnToPoint(-72, -72, 1000);
+  chassis.moveToPoint(-72, -72, 1000, {.maxSpeed = 90});
+  lift.setTarget(100);
 
   chassis.moveToPoint(-50, -50, 1000, {.forwards = false});
-  chassis.moveToPoint(-70, -70, 1000);
-  chassis.moveToPoint(-50, -50, 1000, {.forwards = false});
-
+  chassis.moveToPoint(-65, -70, 1000);
+  chassis.moveToPoint(0, 0, 2000, {.forwards = false});
+  lift.setTarget(34);
 }
 
 
