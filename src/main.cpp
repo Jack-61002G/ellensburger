@@ -21,7 +21,7 @@
 rd::Selector selector({
   {"Red Ring", redRingSide},
   {"Red Mogo", redMogo},
-  {"Red Solo AWP", redSoloAwp}
+  {"Red Solo AWP", redMogoStake}
 }); 
 
 rd::Console console;
@@ -143,7 +143,8 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  redMogo();
+  teamColor = team::blue;
+  blueRingSide();
   return;
 
   selector.run_auton();
