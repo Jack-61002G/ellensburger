@@ -244,21 +244,19 @@ inline void redMogoStake() {
 
   // clamp mogo
   chassis.cancelMotion();
-  chassis.moveToPoint(-23.8, -25, 2000, {.forwards = false, .maxSpeed = 65});
-  pros::delay(400);
-  lift.setTarget(0);
+  chassis.moveToPoint(-24.25, -25, 2000, {.forwards = false, .maxSpeed = 80, .minSpeed = 10, .earlyExitRange = 2});
   chassis.waitUntilDone();
   clamp.extend();
+  lift.setTarget(0);
 
   // doinker alliance stake ring
-  pros::delay(200);
   chassis.moveToPoint(-36, -18.667, 1000);
   chassis.waitUntilDone();
   rightDoinker.extend();
 
   // pull ring back
-  pros::delay(350);
-  chassis.moveToPoint(-24, -30, 1000, {.forwards = false, .maxSpeed = 70, .minSpeed = 30, .earlyExitRange = 9});
+  pros::delay(300);
+  chassis.moveToPoint(-24, -30, 1000, {.forwards = false, .maxSpeed = 90, .minSpeed = 30, .earlyExitRange = 9});
   chassis.moveToPoint(-35, -42, 1500, {.forwards = false});
 
   chassis.waitUntilDone();
@@ -266,38 +264,99 @@ inline void redMogoStake() {
   pros::delay(100);
 
   // eat ring and move to center stacks
-  chassis.moveToPoint(-20.333, -18, 1500, {.maxSpeed = 90});
+  chassis.moveToPoint(-20.333, -18, 1500);
   intake.setDirection(lib::Dir::In);
-  pros::delay(600);
+  pros::delay(700);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
 
   rightDoinker.extend(); // doink
-  pros::delay(333);
+  pros::delay(300);
 
   // back out
-  chassis.moveToPoint(-50, -34, 1000, {.forwards = false, .maxSpeed = 90});
+  chassis.moveToPoint(-50, -34, 1000, {.forwards = false});
   chassis.waitUntilDone();
   rightDoinker.retract();
   pros::delay(200);
 
   // eat ring
-  chassis.moveToPoint(-27.5, -32, 1000, {.maxSpeed = 80});
+  chassis.moveToPoint(-27.5, -32, 1000, {.maxSpeed = 90});
   intake.setDirection(lib::Dir::In);
 
   // move to stack
-  chassis.turnToPoint(-27.5, -53, 1000, {.maxSpeed = 80});
-  chassis.moveToPoint(-27.5, -53, 2000, {.maxSpeed = 85});
+  chassis.turnToPoint(-27.5, -53, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(-27.5, -53, 2000);
+  lift.setTarget(100);
   
-  // set down full goal
-  chassis.turnToPoint(-48, -53, 1000, {.forwards = false, .maxSpeed = 80});
-  chassis.moveToPoint(-48, -53, 1200, {.forwards = false, .maxSpeed = 90});
+  chassis.turnToPoint(-70, -70, 1000);
+  chassis.moveToPoint(-70, -70, 1500);
+  chassis.moveToPoint(-60, -60, 500, {.forwards = false});
+
+  //chassis.turnToPoint(0, 0, 1000);
+  chassis.moveToPoint(-8, -8, 1500);
+  lift.setTarget(65);
+}
+
+
+
+inline void blueMogoStake() {
+  chassis.setPose(56, -14, 90);
+
+  chassis.turnToHeading(40, 1000);
+  lift.setTarget(210);
+  while (armrot.get_angle() < 19500) { pros::delay(10); }
+
+  // clamp mogo
+  chassis.cancelMotion();
+  chassis.moveToPoint(24.25, -25, 2000, {.forwards = false, .maxSpeed = 80, .minSpeed = 10, .earlyExitRange = 2});
   chassis.waitUntilDone();
-  pros::delay(100);
-  intake.setDirection(lib::Dir::Idle);
-  clamp.retract();
+  clamp.extend();
+  lift.setTarget(0);
+
+  // doinker alliance stake ring
+  chassis.moveToPoint(36, -18.667, 1000);
+  chassis.waitUntilDone();
+  leftDoinker.extend();
+
+  // pull ring back
+  pros::delay(300);
+  chassis.moveToPoint(24, -30, 1000, {.forwards = false, .maxSpeed = 90, .minSpeed = 30, .earlyExitRange = 9});
+  chassis.moveToPoint(35, -42, 1500, {.forwards = false});
+
+  chassis.waitUntilDone();
+  leftDoinker.retract();
   pros::delay(100);
 
-  chassis.turnToPoint(-26, -51, 1000, {.forwards = false});
-  chassis.moveToPoint(-26, -51, 1000, {.forwards = false, .maxSpeed = 80});
+  // eat ring and move to center stacks
+  chassis.moveToPoint(20.333, -18, 1500);
+  intake.setDirection(lib::Dir::In);
+  pros::delay(700);
+  intake.setDirection(lib::Dir::Idle);
+  chassis.waitUntilDone();
+
+  leftDoinker.extend(); // doink
+  pros::delay(300);
+
+  // back out
+  chassis.moveToPoint(50, -34, 1000, {.forwards = false});
+  chassis.waitUntilDone();
+  leftDoinker.retract();
+  pros::delay(200);
+
+  // eat ring
+  chassis.moveToPoint(27.5, -32, 1000, {.maxSpeed = 90});
+  intake.setDirection(lib::Dir::In);
+
+  // move to stack
+  chassis.turnToPoint(27.5, -53, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(27.5, -53, 2000);
+  lift.setTarget(100);
+  
+  chassis.turnToPoint(70, -70, 1000);
+  chassis.moveToPoint(70, -70, 1500);
+  chassis.moveToPoint(60, -60, 500, {.forwards = false});
+
+  //chassis.turnToPoint(0, 0, 1000);
+  chassis.moveToPoint(8, -8, 1500);
+  lift.setTarget(65);
 }

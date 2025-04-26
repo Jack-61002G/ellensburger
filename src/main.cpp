@@ -144,7 +144,7 @@ void autonomous() {
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
   teamColor = team::blue;
-  blueRingSide();
+  blueMogoStake();
   return;
 
   selector.run_auton();
