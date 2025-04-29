@@ -26,7 +26,7 @@ private:
   
   
 public:
-  int8_t target_v = 0;
+  Dir direction = Dir::Idle;
   Jam jamMode = Jam::Reverse;
   bool sortEnabled = false;
 
@@ -38,10 +38,9 @@ public:
         
   
   void setDirection(Dir dir) {
-    int8_t volts = (dir == Dir::In) ? 127 : (dir == Dir::Out) ? -127 : 0;
-    if (target_v != volts) {
+    if (direction != dir) {
       jamStartTime = 0; ringSeated = false; sortPrimed = false;
-      target_v = volts;
+      direction = dir;
     }
   }
   void setJamMode(Jam jam) {
@@ -57,10 +56,9 @@ public:
     }
   }
   void setState(Dir dir, Jam jam, bool sort) {
-    int8_t volts = (dir == Dir::In) ? 127 : (dir == Dir::Out) ? -127 : 0;
-    if (target_v != volts || sortEnabled != sort || jamMode != jam) {
+    if (direction != dir || sortEnabled != sort || jamMode != jam) {
       jamStartTime = 0; ringSeated = false; sortPrimed = false;
-      target_v = volts; sortEnabled = sort; jamMode = jam;;
+      direction = dir; sortEnabled = sort; jamMode = jam;;
     }
   }
 };

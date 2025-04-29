@@ -12,7 +12,7 @@ void Intake::loop() { while (true) {
 
 
   // Color Sort Handling
-  if (sortEnabled && target_v > 0 && ((teamColor == team::blue && color->seesRed()) || (teamColor != team::blue && color->seesBlue()))) {
+  if (sortEnabled && direction == Dir::In && ((teamColor == team::blue && color->seesRed()) || (teamColor != team::blue && color->seesBlue()))) {
     sortPrimed = true;
   } else if (sortPrimed) {
     sortPrimed = false;
@@ -22,7 +22,7 @@ void Intake::loop() { while (true) {
   
 
   // Jam Handling
-  if (target_v > 0 && std::abs(motors->get_actual_velocity()) < 5) { switch (jamMode) {
+  if (direction == Dir::In && std::abs(motors->get_actual_velocity()) < 5) { switch (jamMode) {
     case Jam::None:
       break;
     
@@ -52,6 +52,18 @@ void Intake::loop() { while (true) {
   
   // Manual Control
   if (ringSeated) { motors->move(0); }
-  else { motors->move(target_v); }
+  else {
+    switch (direction) {
+    case Dir::Idle:
+      motors->move(0);
+      break;
+    case Dir::In:
+      motors->move(127);
+      break;
+    case Dir::Out:
+      motors->move(-127);
+      break;
+    }
+  }
   pros::delay(10);
 } }

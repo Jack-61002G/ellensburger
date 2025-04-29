@@ -20,11 +20,12 @@
 
 rd::Selector selector({
   {"Red Ring", redRingSide},
+  {"Blue Ring", blueRingSide},
   {"Red Mogo", redMogo},
-  {"Red Solo AWP", redMogoStake}
+  {"Blue Mogo", blueMogo},
+  {"Red Mogo Stake", redMogoStake},
+  {"Blue Mogo Stake", blueMogoStake}
 }); 
-
-rd::Console console;
 
 
 
@@ -76,22 +77,14 @@ void measure_offsets() {
     // Average the offsets
     vert_offset /= iterations;
     horz_offset /= iterations;
-
-    // Print results
-    console.println(std::to_string(vert_offset));
-    console.println(std::to_string(horz_offset));
-
 }
 
 inline void tune(){
   chassis.turnToHeading(180, 3000);
   chassis.waitUntilDone();
-  console.println(std::to_string(chassis.getPose().x) + "," + std::to_string(chassis.getPose().y) + "," + std::to_string(chassis.getPose().theta));
   
   chassis.turnToHeading(0, 3000);
-  chassis.waitUntilDone();
-  console.print(std::to_string(chassis.getPose().x) + "," + std::to_string(chassis.getPose().y) + "," + std::to_string(chassis.getPose().theta));
-  
+  chassis.waitUntilDone();  
 };
 
 void auton_check_loop() {
@@ -125,6 +118,7 @@ void initialize() {
   pros::delay(500);
 
   lights.startTask();
+  selector.focus();
 }
 
 
@@ -143,10 +137,6 @@ void autonomous() {
 
   intake.setState(lib::Dir::Idle, lib::Jam::Reverse, true);
 
-  teamColor = team::blue;
-  blueMogoStake();
-  return;
-
   selector.run_auton();
 }
 
@@ -154,7 +144,6 @@ void autonomous() {
 
 void opcontrol() {
 
-  console.focus();
   intake.startTask();
   lift.startTask();
 
@@ -166,12 +155,6 @@ void opcontrol() {
   chassis.setPose(0, 0, 0);
 
   while (true) {
-
-    console.clear();
-    std::string str = "pos:" + std::to_string(chassis.getPose().x) + "," +
-                               std::to_string(chassis.getPose().y) + "," +
-                               std::to_string(chassis.getPose().theta);
-    console.print(str);
 
     // Alliance Stake Macro
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
@@ -188,7 +171,7 @@ void opcontrol() {
                   controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      lift.setTarget(170);
+      lift.setTarget(168);
     } else {
     // Intake control
     intake.setDirection(

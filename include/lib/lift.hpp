@@ -37,7 +37,11 @@ public:
 
       switch (state) {
       case LiftStates::Voltage:
-        motors->move(target);
+        if (target < -0.1 and position < 10) {
+          motors->move(0);
+        } else {
+          motors->move(target);
+        }
         break;
 
       case LiftStates::Position:

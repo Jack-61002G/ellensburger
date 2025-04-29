@@ -6,6 +6,7 @@
 
 
 inline void redRingSide() {
+  teamColor = team::red;
   chassis.setPose(-56, 14, -90);
   chassis.moveToPoint(-56, 14, 100);
 
@@ -48,7 +49,7 @@ inline void redRingSide() {
 
   chassis.moveToPoint(-48, 48, 2000, {.forwards = false});
   chassis.turnToPoint(-51.6, 20.7, 1000);
-  chassis.moveToPoint(-51.6, 20.7, 1550, {.maxSpeed = 80});
+  chassis.moveToPoint(-52.6, 22, 1550, {.maxSpeed = 80});
   chassis.waitUntil(28.5);
   
   intake.setState(lib::Dir::In, lib::Jam::Reverse, true);
@@ -66,6 +67,7 @@ inline void redRingSide() {
 
 
 inline void blueRingSide() {
+  teamColor = team::blue;
   chassis.setPose(56, 14, 90);
   chassis.moveToPoint(56, 14, 100);
 
@@ -87,8 +89,8 @@ inline void blueRingSide() {
   chassis.moveToPoint(13.7, 32, 1200, {.maxSpeed = 90});
   intake.setDirection(lib::Dir::In);
 
-  chassis.turnToPoint(15, 49, 1000, {.maxSpeed = 100});
-  chassis.moveToPoint(15, 49, 1500, {.minSpeed = 10, .earlyExitRange = 1});
+  chassis.turnToPoint(12.5, 49, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(12.5, 49, 1500, {.minSpeed = 10, .earlyExitRange = 1});
 
   chassis.waitUntilDone();
 
@@ -107,10 +109,10 @@ inline void blueRingSide() {
   chassis.moveToPoint(69.5, 71, 900);
 
   chassis.moveToPoint(48, 48, 2000, {.forwards = false});
-  chassis.turnToPoint(52.5, 20.7, 1000);
-  chassis.moveToPoint(52.5, 20.7, 1550, {.maxSpeed = 80});
+  chassis.turnToPoint(51.6, 20.7, 1000);
+  chassis.moveToPoint(52.6, 22, 1550, {.maxSpeed = 80});
   chassis.waitUntil(28.5);
-
+  
   intake.setState(lib::Dir::In, lib::Jam::Reverse, true);
   rightDoinker.extend();
   pros::delay(280);
@@ -126,6 +128,7 @@ inline void blueRingSide() {
 
 
 inline void redMogo() {
+  teamColor = team::red;
   chassis.setPose(-55.5, -24, -90);
   chassis.setPose(-55.5, -24, -90);
 
@@ -137,8 +140,8 @@ inline void redMogo() {
   clamp.extend();
   chassis.waitUntilDone();
 
-  chassis.turnToPoint(-21.5, -16.5, 1000);
-  chassis.moveToPoint(-21.5, -16.5, 1000, {.maxSpeed = 100});
+  chassis.turnToPoint(-21.5, -16, 1000);
+  chassis.moveToPoint(-21.5, -16, 1000, {.maxSpeed = 100});
   pros::delay(180);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
@@ -146,7 +149,7 @@ inline void redMogo() {
   rightDoinker.extend();
   pros::delay(200);
 
-  chassis.swingToPoint(0, -5.7, lemlib::DriveSide::RIGHT, 750);
+  chassis.swingToPoint(0, -5.5, lemlib::DriveSide::RIGHT, 750);
   chassis.waitUntilDone();
   leftDoinker.extend();
   pros::delay(200);
@@ -167,7 +170,7 @@ inline void redMogo() {
   intake.setDirection(lib::Dir::In);
 
   chassis.turnToPoint(-74, -72, 1000);
-  chassis.moveToPoint(-74, -72, 1000, {.maxSpeed = 90});
+  chassis.moveToPoint(-74, -72, 1200, {.maxSpeed = 90});
   lift.setTarget(100);
 
   chassis.moveToPoint(-55, -55, 1000, {.forwards = false});
@@ -181,6 +184,7 @@ inline void redMogo() {
 
 
 inline void blueMogo() {
+  teamColor = team::blue;
   chassis.setPose(55.5, -24, 90);
   chassis.setPose(55.5, -24, 90);
 
@@ -236,6 +240,7 @@ inline void blueMogo() {
 
 
 inline void redMogoStake() {
+  teamColor = team::red;
   chassis.setPose(-56, -14, -90);
 
   chassis.turnToHeading(-40, 1000);
@@ -300,6 +305,7 @@ inline void redMogoStake() {
 
 
 inline void blueMogoStake() {
+  teamColor = team::blue;
   chassis.setPose(56, -14, 90);
 
   chassis.turnToHeading(40, 1000);
