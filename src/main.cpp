@@ -21,10 +21,10 @@
 rd::Selector selector({
   {"Red Ring", redRingSide},
   {"Blue Ring", blueRingSide},
-  {"Red Mogo", redMogo},
-  {"Blue Mogo", blueMogo},
   {"Red Mogo Stake", redMogoStake},
-  {"Blue Mogo Stake", blueMogoStake}
+  {"Blue Mogo Stake", blueMogoStake},
+  {"Red Mogo Cursed", redMogo},
+  {"Blue Mogo Cursed", blueMogo}
 }); 
 
 
@@ -93,7 +93,7 @@ void auton_check_loop() {
 
       auto lower_name = selector.get_auton()->name;
 
-      if (lower_name.find("blue") != std::string::npos) {
+      if (lower_name.find("Blue") != std::string::npos) {
         teamColor = team::blue;
       } else {
         teamColor = team::red;
