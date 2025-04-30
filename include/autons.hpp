@@ -132,16 +132,16 @@ inline void redMogo() {
   chassis.setPose(-55.5, -24, -90);
   chassis.setPose(-55.5, -24, -90);
 
-  chassis.turnToPoint(-24, -24, 1000, {.forwards = false});
-  chassis.moveToPoint(-24, -24, 1000, {.forwards = false, .maxSpeed = 70});
+  chassis.turnToPoint(-25, -24, 1000, {.forwards = false});
+  chassis.moveToPoint(-25, -24, 1000, {.forwards = false, .maxSpeed = 70});
   chassis.waitUntil(21);
   intake.setDirection(lib::Dir::In);
   chassis.waitUntil(21.75);
   clamp.extend();
   chassis.waitUntilDone();
 
-  chassis.turnToPoint(-21.5, -16, 1000);
-  chassis.moveToPoint(-21.5, -16, 1000, {.maxSpeed = 100});
+  chassis.turnToPoint(-21, -16, 1000);
+  chassis.moveToPoint(-21, -16, 1000, {.maxSpeed = 100});
   pros::delay(180);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
@@ -149,7 +149,7 @@ inline void redMogo() {
   rightDoinker.extend();
   pros::delay(200);
 
-  chassis.swingToPoint(0, -5.5, lemlib::DriveSide::RIGHT, 750);
+  chassis.swingToPoint(0, -5.7, lemlib::DriveSide::RIGHT, 750);
   chassis.waitUntilDone();
   leftDoinker.extend();
   pros::delay(200);
@@ -161,24 +161,23 @@ inline void redMogo() {
   intake.setDirection(lib::Dir::In);
 
   chassis.moveToPoint(-22, -28, 1000);
-  chassis.moveToPoint(-30, -18, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(-31, -19, 1000, {.maxSpeed = 100});
 
-  chassis.turnToPoint(-29, -48, 1000);
+  chassis.turnToPoint(-30, -48, 1000);
   intake.setDirection(lib::Dir::Idle);
-  chassis.moveToPoint(-29, -48, 1000);
+  chassis.moveToPoint(-30, -48, 1000);
   pros::delay(100);
   intake.setDirection(lib::Dir::In);
 
-  chassis.turnToPoint(-74, -72, 1000);
-  chassis.moveToPoint(-74, -72, 1200, {.maxSpeed = 90});
+  chassis.turnToPoint(-48, -48, 1000);
+  chassis.moveToPoint(-60, -56, 1000, {.minSpeed = 20, .earlyExitRange = 10});
+  chassis.moveToPoint(-73, -70.5, 1300, {.maxSpeed = 90});
   lift.setTarget(100);
 
-  chassis.moveToPoint(-55, -55, 1000, {.forwards = false});
-  chassis.moveToPoint(-66, -70, 1000);
-  chassis.moveToPoint(-24, -24, 2000);
+  chassis.moveToPoint(-53, -50, 1000, {.forwards = false});
+  chassis.moveToPoint(-73, -68, 1000);
+  chassis.moveToPoint(-22, -22, 2000);
   lift.setTarget(70);
-  pros::delay(900);
-  intake.setDirection(lib::Dir::Idle);
 }
 
 
@@ -188,26 +187,26 @@ inline void blueMogo() {
   chassis.setPose(55.5, -24, 90);
   chassis.setPose(55.5, -24, 90);
 
-  chassis.turnToPoint(24, -24, 1000, {.forwards = false});
-  chassis.moveToPoint(24, -24, 1000, {.forwards = false, .maxSpeed = 70});
+  chassis.turnToPoint(25, -24, 1000, {.forwards = false});
+  chassis.moveToPoint(25, -24, 1000, {.forwards = false, .maxSpeed = 70});
   chassis.waitUntil(21);
   intake.setDirection(lib::Dir::In);
   chassis.waitUntil(21.75);
   clamp.extend();
   chassis.waitUntilDone();
 
-  chassis.turnToHeading(0, 450);
-  chassis.moveToPoint(16.33, -16.25, 1000, {.maxSpeed = 100});
+  chassis.turnToPoint(20.75, -16.25, 1000);
+  chassis.moveToPoint(20.75, -16.25, 1000, {.maxSpeed = 100});
   pros::delay(180);
   intake.setDirection(lib::Dir::Idle);
   chassis.waitUntilDone();
 
-  rightDoinker.extend();
+  leftDoinker.extend();
   pros::delay(200);
 
-  chassis.swingToPoint(0, 4, lemlib::DriveSide::LEFT, 750);
+  chassis.swingToPoint(0, -5.7, lemlib::DriveSide::LEFT, 750);
   chassis.waitUntilDone();
-  leftDoinker.extend();
+  rightDoinker.extend();
   pros::delay(200);
 
   chassis.moveToPoint(39, -38, 1200, {.forwards = false, .maxSpeed = 100});
@@ -217,7 +216,7 @@ inline void blueMogo() {
   intake.setDirection(lib::Dir::In);
 
   chassis.moveToPoint(22, -28, 1000);
-  chassis.moveToPoint(31, -18.5, 1000, {.maxSpeed = 100});
+  chassis.moveToPoint(30, -18, 1000, {.maxSpeed = 100});
 
   chassis.turnToPoint(30, -48, 1000);
   intake.setDirection(lib::Dir::Idle);
@@ -225,16 +224,15 @@ inline void blueMogo() {
   pros::delay(100);
   intake.setDirection(lib::Dir::In);
 
-  chassis.turnToPoint(74.5, -73, 1000);
-  chassis.moveToPoint(74.5, -73, 1000, {.maxSpeed = 90});
+  chassis.turnToPoint(48, -48, 1000);
+  chassis.moveToPoint(50, -48, 1000, {.minSpeed = 20, .earlyExitRange = 10});
+  chassis.moveToPoint(73, -70.5, 1300, {.maxSpeed = 90});
   lift.setTarget(100);
 
-  chassis.moveToPoint(55, -55, 1000, {.forwards = false});
-  chassis.moveToPoint(65, -70, 1000);
-  chassis.moveToPoint(24, -24, 2000);
+  chassis.moveToPoint(55, -52, 1000, {.forwards = false});
+  chassis.moveToPoint(73, -68, 1000);
+  chassis.moveToPoint(22, -22, 2000);
   lift.setTarget(70);
-  pros::delay(900);
-  intake.setDirection(lib::Dir::Idle);
 }
 
 
