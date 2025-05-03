@@ -13,11 +13,13 @@ void Intake::loop() { while (true) {
 
   // Color Sort Handling
   if (sortEnabled && direction == Dir::In && ((teamColor == team::blue && color->seesRed()) || (teamColor != team::blue && color->seesBlue()))) {
-    sortPrimed = true;
-  } else if (sortPrimed) {
-    sortPrimed = false;
-    motors->move(-127);
-    pros::delay(250);
+    sortTickCount++;
+  } else {
+    if (sortTickCount >= requiredSortTicks) {
+      motors->move(-127);
+      pros::delay(250);
+    }
+    sortTickCount = 0;
   }
   
 

@@ -22,7 +22,8 @@ private:
 
   uint jamStartTime = 0;
   bool ringSeated = false;
-  bool sortPrimed = false;
+  int sortTickCount = 0;
+  const int requiredSortTicks = 3;
   
   
 public:
@@ -39,7 +40,7 @@ public:
   
   void setDirection(Dir dir) {
     if (direction != dir) {
-      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      jamStartTime = 0; ringSeated = false; sortTickCount = 0;
       direction = dir;
     }
   }
@@ -51,13 +52,13 @@ public:
   }
   void setSortMode(bool sort) {
     if (sortEnabled != sort) {
-      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      jamStartTime = 0; ringSeated = false; sortTickCount = 0;
       sortEnabled = sort;
     }
   }
   void setState(Dir dir, Jam jam, bool sort) {
     if (direction != dir || sortEnabled != sort || jamMode != jam) {
-      jamStartTime = 0; ringSeated = false; sortPrimed = false;
+      jamStartTime = 0; ringSeated = false; sortTickCount = 0;
       direction = dir; sortEnabled = sort; jamMode = jam;;
     }
   }
